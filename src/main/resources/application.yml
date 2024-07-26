@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: eater
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/eater
+    username: eater
+    password: eater
+
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
