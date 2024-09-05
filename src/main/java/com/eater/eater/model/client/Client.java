@@ -1,7 +1,7 @@
-package com.eater.eater.model.courier;
+package com.eater.eater.model.client;
 
-import com.eater.eater.enums.TransportType;
 import com.eater.eater.model.orders.Orders;
+import com.eater.eater.model.courier.CourierRating;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
@@ -17,51 +17,41 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-@Table(name = "courier")
-public class Courier implements UserDetails {
+@Table(name = "client")
+public class Client implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @Column(nullable = false)
     private String name;
-
+    @Column(nullable = false)
+    private String address;
+    @Column(nullable = false)
+    private Double latitude;
+    @Column(nullable = false)
+    private Double longitude;
     @Column(unique = true, nullable = false)
     private String email;
-
     @Column(unique = true, nullable = false)
     private String phone;
-
+    @Column(nullable = false)
+    private String avatarUrl;
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false)
-    private String avatarUrl;
-
-    @Column(nullable = false)
-    private boolean isActive = false;
-
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private TransportType transportType;
-
-    @OneToMany(mappedBy = "courier")
-    @JsonIgnoreProperties("courier")
+    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnoreProperties("client")
     private List<Orders> orders;
 
-    @OneToOne(mappedBy = "courier", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonIgnoreProperties("courier")
-    private CourierCoordinates coordinates;
-
-    @OneToOne(mappedBy = "courier", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonIgnoreProperties("courier")
-    private CourierRating rating;
+    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnoreProperties("client")
+    private List<CourierRating> rating;
 
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         // I did it without role entity, I try to do it maximum easy
-        return List.of(new SimpleGrantedAuthority("ROLE_COURIER"));
+        return List.of(new SimpleGrantedAuthority("ROLE_CLIENT"));
     }
 
     @Override

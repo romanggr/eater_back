@@ -1,0 +1,18 @@
+package com.eater.eater.dto.restaurantOwner;
+
+import com.eater.eater.model.restaurantOwner.RestaurantDish;
+import lombok.Data;
+
+import java.util.List;
+
+@Data
+public class UpdateRestaurantRequest {
+    private String name;
+    private String description;
+    private String address;
+    private Double latitude;
+    private Double longitude;
+
+    private boolean isOpenFrom;
+    private boolean isOpenTo;
+}

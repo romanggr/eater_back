@@ -14,3 +14,8 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+
+auth:
+  app:
+    secret: 188d53804216495002bf84398070a17e690a30802cc1fe7b30edc639c71e64c0
+    lifeTime: 3600000
