@@ -1,5 +1,6 @@
 package com.eater.eater.service.courier;
 
+import com.eater.eater.dto.auth.UpdatePasswordRequest;
 import com.eater.eater.dto.courier.*;
 import com.eater.eater.model.courier.Courier;
 import com.eater.eater.model.courier.CourierCoordinates;
@@ -34,9 +35,11 @@ public class CourierService {
 
     //get courier
     public CourierDTO getCourier() {
-        Courier currentUser = SecurityUtil.getCurrentUser(Courier.class);
+        Long currentUserId = SecurityUtil.getCurrentUserId(Courier.class);
+        Courier courier = courierRepository.findById(currentUserId).orElseThrow(
+                () -> new EntityNotFoundException("Courier not found"));
 
-        return courierMapper.toDTO(currentUser);
+        return courierMapper.toDTO(courier);
     }
 
     //update courier
@@ -46,14 +49,14 @@ public class CourierService {
         Courier currentCourier = courierRepository.findById(currentUserId).orElseThrow(
                 () -> new EntityNotFoundException("Courier not found"));
 
-        userValidationService.validateUser(updateCourierRequest.getEmail(), updateCourierRequest.getPhone());
+        userValidationService.validateUser(updateCourierRequest.getPhone(), currentCourier.getPhone(), updateCourierRequest.getEmail(), currentCourier.getEmail());
         Courier courier = courierRepository.save(courierMapper.updateRequestToEntity(updateCourierRequest, currentCourier));
 
         return courierMapper.toDTO(courier);
     }
 
     // update courier password
-    public CourierDTO updateCourierPassword(UpdateCourierPasswordRequest request) {
+    public CourierDTO updateCourierPassword(UpdatePasswordRequest request) {
         Long currentUserId = SecurityUtil.getCurrentUserId(Courier.class);
         Courier currentCourier = courierRepository.findById(currentUserId).orElseThrow(
                 () -> new EntityNotFoundException("Courier not found"));
@@ -94,4 +97,5 @@ public class CourierService {
 
         return courierMapper.toDTO(currentCourier);
     }
+
 }

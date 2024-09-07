@@ -9,6 +9,8 @@ import com.eater.eater.model.courier.CourierRating;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class CourierMapper {
@@ -28,7 +30,10 @@ public class CourierMapper {
         courierDTO.setIsActive(courier.isActive());
 
         if (courier.getRating() != null) {
-            courierDTO.setRating(courier.getRating().getRating());
+            courierDTO.setRating(courier.getRating().stream()
+                    .mapToInt(CourierRating::getRating)
+                    .average()
+                    .orElse(0.0));
         }
 
         if (courier.getCoordinates() != null) {
@@ -40,34 +45,6 @@ public class CourierMapper {
         return courierDTO;
     }
 
-    public Courier toEntity(CourierDTO courierDTO, Courier courier) {
-        if (courierDTO == null) {
-            return null;
-        }
-
-        courier.setId(courierDTO.getId());
-        courier.setName(courierDTO.getName());
-        courier.setEmail(courierDTO.getEmail());
-        courier.setPhone(courierDTO.getPhone());
-        courier.setAvatarUrl(courierDTO.getAvatarUrl());
-        courier.setTransportType(courierDTO.getTransportType());
-        courier.setActive(courierDTO.getIsActive());
-
-        if (courierDTO.getRating() != 0) {
-            CourierRating rating = new CourierRating();
-            rating.setRating(courierDTO.getRating());
-            courier.setRating(rating);
-        }
-
-        if (courierDTO.getLatitude() != null ) {
-            CourierCoordinates coordinates = new CourierCoordinates();
-            coordinates.setLatitude(courierDTO.getLatitude());
-            coordinates.setLongitude(courierDTO.getLongitude());
-            coordinates.setLastUpdate(courierDTO.getLastUpdate());
-        }
-
-        return courier;
-    }
 
     public Courier updateRequestToEntity(UpdateCourierRequest updateCourierRequest, Courier courier) {
         if (updateCourierRequest == null) {
@@ -83,11 +60,21 @@ public class CourierMapper {
         return courier;
     }
 
-    public CourierCoordinates coordinatesToEntity(CourierCoordinates courierCoordinates, CourierCoordinatesDTO courierCoordinatesDTO){
+    public CourierCoordinates coordinatesToEntity(CourierCoordinates courierCoordinates, CourierCoordinatesDTO courierCoordinatesDTO) {
         courierCoordinates.setLatitude(courierCoordinatesDTO.getLatitude());
         courierCoordinates.setLongitude(courierCoordinatesDTO.getLongitude());
         courierCoordinates.setLastUpdate(courierCoordinatesDTO.getLastUpdate());
 
         return courierCoordinates;
+    }
+
+    public CourierCoordinatesDTO coordinatesToDTO(CourierCoordinates courierCoordinates) {
+        CourierCoordinatesDTO courierCoordinatesDTO = new CourierCoordinatesDTO();
+
+        courierCoordinatesDTO.setLatitude(courierCoordinates.getLatitude());
+        courierCoordinatesDTO.setLongitude(courierCoordinates.getLongitude());
+        courierCoordinatesDTO.setLastUpdate(courierCoordinates.getLastUpdate());
+
+        return courierCoordinatesDTO;
     }
 }

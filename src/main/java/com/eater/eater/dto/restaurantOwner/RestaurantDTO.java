@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @AllArgsConstructor
@@ -19,8 +21,8 @@ public class RestaurantDTO {
     private String address;
     private Double latitude;
     private Double longitude;
-    private boolean isOpenFrom;
-    private boolean isOpenTo;
+    private LocalTime isOpenFrom;
+    private LocalTime isOpenTo;
 
     private List<RestaurantDish> restaurantMenu;
 }

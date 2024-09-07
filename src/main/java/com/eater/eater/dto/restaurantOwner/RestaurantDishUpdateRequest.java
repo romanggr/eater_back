@@ -11,5 +11,4 @@ public class RestaurantDishUpdateRequest {
     private Double price;
     private Double weight;
     private String imageUrl;
-    private Restaurant restaurant;
 }

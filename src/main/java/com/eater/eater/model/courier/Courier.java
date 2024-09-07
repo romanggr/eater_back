@@ -53,9 +53,9 @@ public class Courier implements UserDetails {
     @JsonIgnoreProperties("courier")
     private CourierCoordinates coordinates;
 
-    @OneToOne(mappedBy = "courier", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "courier", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnoreProperties("courier")
-    private CourierRating rating;
+    private List<CourierRating> rating;
 
 
     @Override

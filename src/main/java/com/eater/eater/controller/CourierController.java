@@ -1,15 +1,12 @@
-package com.eater.eater.controller.courier;
+package com.eater.eater.controller;
 
+import com.eater.eater.dto.auth.UpdatePasswordRequest;
 import com.eater.eater.dto.courier.*;
-import com.eater.eater.model.courier.Courier;
+import com.eater.eater.model.courier.CourierRating;
 import com.eater.eater.service.courier.CourierService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/courier")
@@ -45,7 +42,7 @@ public class CourierController {
 
     // Update password
     @PutMapping("/updatePassword")
-    public ResponseEntity<CourierDTO> updatePassword(@RequestBody UpdateCourierPasswordRequest request) {
+    public ResponseEntity<CourierDTO> updatePassword(@RequestBody UpdatePasswordRequest request) {
         CourierDTO response = courierService.updateCourierPassword(request);
         return ResponseEntity.ok(response);
     }
@@ -56,6 +53,9 @@ public class CourierController {
         CourierDTO response = courierService.updateIsActive(courierIsActiveDTO);
         return ResponseEntity.ok(response);
     }
+
+   // Get courier rating
+
 
     //todo Accept order
     // Confirm order delivering

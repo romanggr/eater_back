@@ -3,7 +3,6 @@ package com.eater.eater.dto.client;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@NoArgsConstructor
 @Data
 public class UpdateClientRequest {
         private String name;

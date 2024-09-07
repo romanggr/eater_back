@@ -19,7 +19,7 @@ public class CourierRating {
     private Long id;
     private int rating;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "courier_id", referencedColumnName = "id")
     private Courier courier;
 

@@ -1,4 +1,4 @@
-package com.eater.eater.controller.orders;
+package com.eater.eater.controller;
 
 import com.eater.eater.service.orders.OrdersService;
 import org.springframework.beans.factory.annotation.Autowired;

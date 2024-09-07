@@ -76,16 +76,4 @@ public class AuthController {
     }
 
 
-
-//    @GetMapping("/me")
-//    public ResponseEntity<CourierDto> authenticatedUser() {
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        Courier currentCourier = (Courier) authentication.getPrincipal();
-//        CourierDto currentUserDto = new CourierDto();
-//        currentUserDto.setId(currentCourier.getId());
-//        currentUserDto.setName(currentCourier.getName());
-//        currentUserDto.setEmail(currentCourier.getEmail());
-//        return ResponseEntity.ok(currentUserDto);
-//    }
-
 }

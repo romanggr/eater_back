@@ -2,6 +2,7 @@ package com.eater.eater.model.restaurantOwner;
 
         import com.eater.eater.model.orders.Orders;
         import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+        import com.fasterxml.jackson.annotation.JsonManagedReference;
         import jakarta.persistence.*;
         import lombok.AllArgsConstructor;
         import lombok.Data;
@@ -32,7 +33,7 @@ public class RestaurantOwner implements UserDetails {
     private String password;
 
     @OneToOne(mappedBy = "restaurantOwner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonIgnoreProperties("restaurantOwner")
+    @JsonManagedReference
     private Restaurant restaurant;
 
     @OneToMany(mappedBy = "restaurantOwner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

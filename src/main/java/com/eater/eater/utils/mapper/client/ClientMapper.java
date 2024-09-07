@@ -31,10 +31,6 @@ public class ClientMapper {
             return null;
         }
 
-        if (client == null) {
-            client = new Client();
-        }
-
         client.setName(clientDTO.getName());
         client.setAddress(clientDTO.getAddress());
         client.setLatitude(clientDTO.getLatitude());

@@ -48,9 +48,10 @@ public class AuthService {
 
     //registration
     public LoginResponse courierSignup(CourierRegistrationRequest input) {
-        Courier user = CourierRegistrationMapper.toEntity(input, passwordEncoder);
+        //validation
+        userValidationService.validateUser(input.getPhone(),null, input.getEmail(), null, input.getPassword());
 
-        userValidationService.validateUser(user.getPhone(), user.getEmail(), user.getPassword());
+        Courier user = CourierRegistrationMapper.toEntity(input, passwordEncoder);
         courierRepository.save(user);
 
         Authentication authentication = authenticationManager.authenticate(
@@ -68,8 +69,10 @@ public class AuthService {
     }
 
     public LoginResponse adminSignup(AdminRegistrationRequest input) {
+        //validation
+        userValidationService.validateUser(input.getPhone(),null, input.getEmail(), null, input.getPassword());
+
         Admin user = AdminRegistrationMapper.toEntity(input, passwordEncoder);
-        userValidationService.validateUser(user.getPhone(), user.getEmail(), user.getPassword());
         adminRepository.save(user);
 
         Authentication authentication = authenticationManager.authenticate(
@@ -86,40 +89,44 @@ public class AuthService {
         return loginResponse;
     }
 
-    public LoginResponse clientSignup(ClientRegistrationRequest user) {
-        Client client = ClientRegistrationMapper.toEntity(user, passwordEncoder);
-        userValidationService.validateUser(user.getPhone(), user.getEmail(), user.getPassword());
-        clientRepository.save(client);
+    public LoginResponse clientSignup(ClientRegistrationRequest input) {
+        //validation
+        userValidationService.validateUser(input.getPhone(),null, input.getEmail(), null, input.getPassword());
+
+        Client user = ClientRegistrationMapper.toEntity(input, passwordEncoder);
+        clientRepository.save(user);
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        user.getEmail(),
-                        user.getPassword()
+                        input.getEmail(),
+                        input.getPassword()
                 )
         );
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        String jwtToken = jwtService.generateToken(client);
+        String jwtToken = jwtService.generateToken(user);
         LoginResponse loginResponse = new LoginResponse();
         loginResponse.setToken(jwtToken);
 
         return loginResponse;
     }
 
-    public LoginResponse restaurantOwnerSignup(RestaurantOwnerRegistrationRequest user) {
-        RestaurantOwner client = RestaurantOwnerRegistrationMapper.toEntity(user, passwordEncoder);
-        userValidationService.validateUser(user.getPhone(), user.getEmail(), user.getPassword());
-        restaurantOwnerRepository.save(client);
+    public LoginResponse restaurantOwnerSignup(RestaurantOwnerRegistrationRequest input) {
+        //validation
+        userValidationService.validateUser(input.getPhone(),null, input.getEmail(), null, input.getPassword());
+        RestaurantOwner user = RestaurantOwnerRegistrationMapper.toEntity(input, passwordEncoder);
+        restaurantOwnerRepository.save(user);
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        user.getEmail(),
-                        user.getPassword()
+                        input.getEmail(),
+                        input.getPassword()
                 )
         );
+
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        String jwtToken = jwtService.generateToken(client);
+        String jwtToken = jwtService.generateToken(user);
         LoginResponse loginResponse = new LoginResponse();
         loginResponse.setToken(jwtToken);
 
@@ -186,7 +193,6 @@ public class AuthService {
         loginResponse.setToken(jwtToken);
         return loginResponse;
     }
-
 
 
 }

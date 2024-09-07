@@ -14,6 +14,4 @@ public interface CourierRepository extends JpaRepository<Courier, Long> {
     Optional<Courier> findByEmail(String email);
     boolean existsByEmail(String email);
     boolean existsByPhone(String phone);
-    @Query("SELECT c.coordinates FROM Courier c WHERE c.id = :courierId")
-    Optional<CourierCoordinates> findCourierCoordinatesByCourierId(@Param("courierId") Long courierId);
 }

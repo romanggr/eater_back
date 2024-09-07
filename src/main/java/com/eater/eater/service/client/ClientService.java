@@ -1,68 +1,111 @@
 package com.eater.eater.service.client;
 
+import com.eater.eater.dto.client.ClientDTO;
+import com.eater.eater.dto.client.UpdateClientRequest;
+import com.eater.eater.dto.courier.CourierCoordinatesDTO;
+import com.eater.eater.dto.courier.CourierDTO;
+import com.eater.eater.dto.courier.CourierRatingDTO;
+import com.eater.eater.dto.auth.UpdatePasswordRequest;
+import com.eater.eater.model.client.Client;
+import com.eater.eater.model.courier.Courier;
+import com.eater.eater.model.courier.CourierCoordinates;
+import com.eater.eater.model.courier.CourierRating;
+import com.eater.eater.repository.client.ClientRepository;
+import com.eater.eater.repository.courier.CourierCoordinatesRepository;
+import com.eater.eater.repository.courier.CourierRatingRepository;
+import com.eater.eater.repository.courier.CourierRepository;
+import com.eater.eater.security.SecurityUtil;
+import com.eater.eater.service.auth.UserValidationService;
+import com.eater.eater.utils.mapper.client.ClientMapper;
+import com.eater.eater.utils.mapper.courier.CourierMapper;
+import com.eater.eater.utils.mapper.courier.CourierRatingMapper;
+import jakarta.persistence.EntityNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ClientService {
-//    private final ClientMapper clientMapper;
-//    private final CourierCoordinatesMapper courierCoordinatesMapper;
-//    private final CourierRatingMapper courierRatingMapper;
-//    private final ClientRepository clientRepository;
-//    private final CourierRepository courierRepository;
-//    private final CourierRatingRepository courierRatingRepository;
-//
-//    @Autowired
-//    public ClientService(ClientMapper clientMapper, CourierCoordinatesMapper courierCoordinatesMapper, CourierRatingMapper courierRatingMapper, ClientRepository clientRepository, CourierRepository courierRepository, CourierRatingRepository courierRatingRepository) {
-//        this.clientMapper = clientMapper;
-//        this.courierCoordinatesMapper = courierCoordinatesMapper;
-//        this.courierRatingMapper = courierRatingMapper;
-//        this.clientRepository = clientRepository;
-//        this.courierRepository = courierRepository;
-//        this.courierRatingRepository = courierRatingRepository;
-//    }
-//
-//
-//    //  Get client data
-//    public ClientDTO getClient() {
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        Client currentUser = (Client) authentication.getPrincipal();
-//        return clientMapper.toDTO(currentUser);
-//    }
-//
-//    // Update user data
-//    public ClientDTO updateClient(UpdateClientRequest updateClientRequest) {
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        Client currentUser = (Client) authentication.getPrincipal();
-//        Long currentUserId = currentUser.getId();
-//
-//        Client currentClient = clientRepository.findById(currentUserId).orElseThrow(
-//                () -> new EntityNotFoundException("Client not found"));
-//        Client response = clientRepository.save(clientMapper.toEntity(updateClientRequest, currentClient));
-//
-//        return clientMapper.toDTO(response);
-//    }
-//
-//    // Get courier coordinates
-//    public CourierCoordinatesDTO getCourierCoordinates(Long courierId) {
-//        CourierCoordinates courierCoordinates = courierRepository.findCourierCoordinatesByCourierId(courierId).orElseThrow(
-//                () -> new EntityNotFoundException("Courier with id: " + courierId + " not found"));
-//
-//        return courierCoordinatesMapper.toDTO(courierCoordinates);
-//    }
-//
-//    // Give courier rating
-//    public CourierRating setCourierRating(CourierRatingDTO courierRatingDTO) {
-//        Courier courier = courierRepository.findById(courierRatingDTO.getCourierId())
-//                .orElseThrow(() -> new EntityNotFoundException("Courier with id: " + courierRatingDTO.getCourierId() + " not found"));
-//
-//        Client client = clientRepository.findById(courierRatingDTO.getClientId())
-//                .orElseThrow(() -> new EntityNotFoundException("Client with id: " + courierRatingDTO.getClientId() + " not found"));
-//
-//
-//        CourierRating courierRating = courierRatingMapper.toEntity(courierRatingDTO, courier, client);
-//
-//        return courierRatingRepository.save(courierRating);
-//    }
+    private final ClientMapper clientMapper;
+    private final CourierRatingMapper courierRatingMapper;
+    private final ClientRepository clientRepository;
+    private final CourierRepository courierRepository;
+    private final CourierRatingRepository courierRatingRepository;
+    private final UserValidationService userValidationService;
+    private final CourierMapper courierMapper;
+    private final PasswordEncoder passwordEncoder;
+
+    @Autowired
+    public ClientService(ClientMapper clientMapper, CourierRatingMapper courierRatingMapper, ClientRepository clientRepository, CourierRepository courierRepository, CourierCoordinatesRepository courierCoordinatesRepository, CourierRatingRepository courierRatingRepository, UserValidationService userValidationService, CourierMapper courierMapper, PasswordEncoder passwordEncoder) {
+        this.clientMapper = clientMapper;
+        this.courierRatingMapper = courierRatingMapper;
+        this.clientRepository = clientRepository;
+        this.courierRepository = courierRepository;
+        this.courierRatingRepository = courierRatingRepository;
+        this.userValidationService = userValidationService;
+        this.courierMapper = courierMapper;
+        this.passwordEncoder = passwordEncoder;
+    }
+
+
+    //  Get client data
+    public ClientDTO getClient() {
+        Client currentUser = SecurityUtil.getCurrentUser(Client.class);
+        return clientMapper.toDTO(currentUser);
+    }
+
+    // Update user data
+    public ClientDTO updateClient(UpdateClientRequest updateClientRequest) {
+        Long currentUserId = SecurityUtil.getCurrentUserId(Client.class);
+        Client currentClient = clientRepository.findById(currentUserId).orElseThrow(
+                () -> new EntityNotFoundException("Client not found"));
+
+        userValidationService.validateUser(updateClientRequest.getPhone(), currentClient.getPhone(), updateClientRequest.getEmail(), currentClient.getEmail());
+        Client response = clientRepository.save(clientMapper.toEntity(updateClientRequest, currentClient));
+
+        return clientMapper.toDTO(response);
+    }
+
+
+    // update client password
+    public ClientDTO updateCourierPassword(UpdatePasswordRequest request) {
+        Long currentUserId = SecurityUtil.getCurrentUserId(Client.class);
+        Client user = clientRepository.findById(currentUserId).orElseThrow(
+                () -> new EntityNotFoundException("Client not found"));
+
+        userValidationService.validatePassword(request.getPassword());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        Client client = clientRepository.save(user);
+
+        return clientMapper.toDTO(client);
+    }
+
+    // Get courier coordinates
+    public CourierCoordinatesDTO getCourierCoordinates(Long courierId) {
+        Courier courier = courierRepository.findById(courierId).orElseThrow(
+                () -> new EntityNotFoundException("Courier with id: " + courierId + " not found"));
+        CourierCoordinates coordinates = courier.getCoordinates();
+
+        return courierMapper.coordinatesToDTO(coordinates);
+    }
+
+    // Give courier rating
+    public CourierRatingDTO setCourierRating(CourierRatingDTO courierRatingDTO) {
+        if(courierRatingDTO.getRating() > 5 || courierRatingDTO.getRating() < 1){
+            throw new IllegalArgumentException("The rating should be from 1 to 5");
+        }
+
+        Courier courier = courierRepository.findById(courierRatingDTO.getCourierId())
+                .orElseThrow(() -> new EntityNotFoundException("Courier with id: " + courierRatingDTO.getCourierId() + " not found"));
+
+        Client client = clientRepository.findById(courierRatingDTO.getClientId())
+                .orElseThrow(() -> new EntityNotFoundException("Client with id: " + courierRatingDTO.getClientId() + " not found"));
+
+        CourierRating courierRating = courierRatingMapper.toEntity(courierRatingDTO, courier, client);
+        courierRatingRepository.save(courierRating);
+
+        return courierRatingMapper.toDTO(courierRating);
+    }
 
 
 //todo

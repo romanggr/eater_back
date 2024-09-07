@@ -2,6 +2,7 @@ package com.eater.eater.utils.mapper.auth;
 
 import com.eater.eater.dto.auth.CourierRegistrationRequest;
 import com.eater.eater.model.courier.CourierCoordinates;
+import com.eater.eater.model.courier.CourierRating;
 import com.eater.eater.model.orders.Orders;
 import com.eater.eater.model.courier.Courier;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,7 +21,7 @@ public class CourierRegistrationMapper {
         courier.setPhone(input.getPhone());
         courier.setPassword(passwordEncoder.encode(input.getPassword()));
         courier.setAvatarUrl(input.getAvatarUrl());
-        courier.setRating(input.getCourierRating());
+        courier.setRating((List<CourierRating>) input.getCourierRating());
         courier.setOrders((List<Orders>) input.getOrders());
         courier.setTransportType(input.getTransportType());
 

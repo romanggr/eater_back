@@ -15,7 +15,7 @@ public class CourierDTO {
     private TransportType transportType;
     private Boolean isActive;
 
-    private int rating;
+    private double rating;
 
     private Double latitude;
     private Double longitude;

@@ -13,7 +13,6 @@ public class CourierRatingMapper {
         if(courierRating == null) return null;
 
         CourierRatingDTO courierRatingDTO = new CourierRatingDTO();
-        courierRatingDTO.setId(courierRating.getId());
         courierRatingDTO.setRating(courierRating.getRating());
         courierRatingDTO.setCourierId(courierRating.getCourier().getId());
         courierRatingDTO.setClientId(courierRating.getClient().getId());
@@ -25,7 +24,6 @@ public class CourierRatingMapper {
         if (courierRatingDTO == null) return null;
 
         CourierRating courierRating = new CourierRating();
-        courierRating.setId(courierRatingDTO.getId());
         courierRating.setRating(courierRatingDTO.getRating());
         courierRating.setCourier(courier);
         courierRating.setClient(client);

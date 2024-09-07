@@ -13,8 +13,8 @@ public class RestaurantMapper {
         restaurant.setAddress(request.getAddress());
         restaurant.setName(request.getName());
         restaurant.setDescription(request.getDescription());
-        restaurant.setOpenFrom(request.isOpenFrom());
-        restaurant.setOpenTo(request.isOpenTo());
+        restaurant.setIsOpenFrom(request.getIsOpenFrom());
+        restaurant.setIsOpenTo(request.getIsOpenTo());
         restaurant.setLatitude(request.getLatitude());
         restaurant.setLongitude(request.getLongitude());
 
@@ -31,8 +31,8 @@ public class RestaurantMapper {
         restaurantDTO.setAddress(restaurant.getAddress());
         restaurantDTO.setLatitude(restaurant.getLatitude());
         restaurantDTO.setLongitude(restaurant.getLongitude());
-        restaurantDTO.setOpenFrom(restaurant.isOpenFrom());
-        restaurantDTO.setOpenTo(restaurant.isOpenTo());
+        restaurantDTO.setIsOpenFrom(restaurant.getIsOpenFrom());
+        restaurantDTO.setIsOpenTo(restaurant.getIsOpenTo());
         restaurantDTO.setRestaurantMenu(restaurant.getRestaurantDishes());
 
         return restaurantDTO;
