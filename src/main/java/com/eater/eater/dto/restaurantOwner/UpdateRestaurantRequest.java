@@ -14,6 +14,7 @@ public class UpdateRestaurantRequest {
     private String address;
     private Double latitude;
     private Double longitude;
+    private String avatarUrl;
 
     private LocalTime isOpenFrom;
     private LocalTime isOpenTo;

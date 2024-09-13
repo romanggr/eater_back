@@ -53,7 +53,6 @@ public class SecurityConfiguration {
     }
 
 
-    //TODO modify config for url
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();

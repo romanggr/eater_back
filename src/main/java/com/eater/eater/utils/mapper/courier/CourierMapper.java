@@ -1,5 +1,6 @@
 package com.eater.eater.utils.mapper.courier;
 
+import com.eater.eater.dto.admin.CouriersForAdminDTO;
 import com.eater.eater.dto.courier.CourierCoordinatesDTO;
 import com.eater.eater.dto.courier.CourierDTO;
 import com.eater.eater.dto.courier.UpdateCourierRequest;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class CourierMapper {
@@ -27,7 +29,8 @@ public class CourierMapper {
         courierDTO.setPhone(courier.getPhone());
         courierDTO.setAvatarUrl(courier.getAvatarUrl());
         courierDTO.setTransportType(courier.getTransportType());
-        courierDTO.setIsActive(courier.isActive());
+        courierDTO.setRole(courier.getRole());
+        courierDTO.setCourierStatus(courier.getCourierStatus());
 
         if (courier.getRating() != null) {
             courierDTO.setRating(courier.getRating().stream()
@@ -76,5 +79,24 @@ public class CourierMapper {
         courierCoordinatesDTO.setLastUpdate(courierCoordinates.getLastUpdate());
 
         return courierCoordinatesDTO;
+    }
+
+    public List<CouriersForAdminDTO> allCourierToDTO(List<Courier> couriers) {
+        if (couriers == null || couriers.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        return couriers.stream().map(courier -> {
+            CouriersForAdminDTO dto = new CouriersForAdminDTO();
+
+            dto.setId(courier.getId());
+            dto.setPhone(courier.getPhone());
+            dto.setAvatarUrl(courier.getAvatarUrl());
+            dto.setTransportType(courier.getTransportType());
+            dto.setCourierStatus(courier.getCourierStatus());
+
+            return dto;
+
+        }).collect(Collectors.toList());
     }
 }

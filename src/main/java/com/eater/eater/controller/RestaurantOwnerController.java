@@ -38,7 +38,6 @@ private final RestaurantService restaurantService;
         return ResponseEntity.ok(response);
     }
 
-
     @PutMapping("/updatePassword")
     public ResponseEntity<RestaurantOwnerDTO> updatePassword(@RequestBody UpdatePasswordRequest request) {
         RestaurantOwnerDTO response = restaurantOwnerService.updatePassword(request);

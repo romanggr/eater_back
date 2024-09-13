@@ -9,6 +9,7 @@ import com.eater.eater.repository.restaurantOwner.RestaurantRepository;
 import com.eater.eater.security.SecurityUtil;
 import com.eater.eater.utils.mapper.restaurantOwner.RestaurantDishMapper;
 import com.eater.eater.utils.mapper.restaurantOwner.RestaurantMapper;
+import com.eater.eater.utils.mapper.restaurantOwner.RestaurantOwnerMapper;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +26,7 @@ public class RestaurantService {
         this.restaurantDishRepository = restaurantDishRepository;
         this.restaurantDishMapper = restaurantDishMapper;
     }
+
 
 
     //update restaurant

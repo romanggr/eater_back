@@ -2,6 +2,8 @@ package com.eater.eater.service.courier;
 
 import com.eater.eater.dto.auth.UpdatePasswordRequest;
 import com.eater.eater.dto.courier.*;
+import com.eater.eater.enums.CourierStatus;
+import com.eater.eater.exception.StatusException;
 import com.eater.eater.model.courier.Courier;
 import com.eater.eater.model.courier.CourierCoordinates;
 import com.eater.eater.repository.courier.CourierCoordinatesRepository;
@@ -39,6 +41,8 @@ public class CourierService {
         Courier courier = courierRepository.findById(currentUserId).orElseThrow(
                 () -> new EntityNotFoundException("Courier not found"));
 
+        SecurityUtil.validateUserIsBanned(courier.getCourierStatus());
+
         return courierMapper.toDTO(courier);
     }
 
@@ -49,7 +53,7 @@ public class CourierService {
         Courier currentCourier = courierRepository.findById(currentUserId).orElseThrow(
                 () -> new EntityNotFoundException("Courier not found"));
 
-        userValidationService.validateUser(updateCourierRequest.getPhone(), currentCourier.getPhone(), updateCourierRequest.getEmail(), currentCourier.getEmail());
+        userValidationService.validateUser(updateCourierRequest.getPhone(), currentCourier.getPhone(), updateCourierRequest.getEmail(), currentCourier.getEmail(), currentCourier.getRole());
         Courier courier = courierRepository.save(courierMapper.updateRequestToEntity(updateCourierRequest, currentCourier));
 
         return courierMapper.toDTO(courier);
@@ -71,17 +75,15 @@ public class CourierService {
     // Update coordinates
     public CourierDTO updateCourierCoordinates(CourierCoordinatesDTO courierCoordinatesDTO) {
         Courier currentUser = SecurityUtil.getCurrentUser(Courier.class);
-
         Courier currentCourier = courierRepository.findById(currentUser.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Courier not found"));
-
         CourierCoordinates coordinates = currentCourier.getCoordinates();
+
         if (coordinates == null) {
             throw new EntityNotFoundException("Coordinates not found for the current courier");
         }
 
         courierCoordinatesRepository.save(courierMapper.coordinatesToEntity(coordinates, courierCoordinatesDTO));
-
         return courierMapper.toDTO(currentCourier);
     }
 
@@ -92,7 +94,9 @@ public class CourierService {
         Courier currentCourier = courierRepository.findById(currentUser.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Courier not found"));
 
-        currentCourier.setActive(isActiveDTO.getIsActive());
+        SecurityUtil.validateCourierStatus(currentCourier.getCourierStatus());
+
+        currentCourier.setCourierStatus(isActiveDTO.getIsActive() ? CourierStatus.AVAILABLE : CourierStatus.OFF_DUTY);
         courierRepository.save(currentCourier);
 
         return courierMapper.toDTO(currentCourier);

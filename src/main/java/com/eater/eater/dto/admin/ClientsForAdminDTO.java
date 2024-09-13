@@ -1,21 +1,14 @@
-package com.eater.eater.dto.client;
-
+package com.eater.eater.dto.admin;
 
 import com.eater.eater.enums.ClientStatus;
 import com.eater.eater.enums.Role;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-public class ClientDTO {
+public class ClientsForAdminDTO {
     private Long id;
     private String name;
-    private String address;
-    private Double latitude;
-    private Double longitude;
-    private String email;
     private String phone;
     private String avatarUrl;
     private ClientStatus clientStatus;
-    private Role role;
 }

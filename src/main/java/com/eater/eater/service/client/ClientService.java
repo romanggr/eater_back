@@ -3,9 +3,9 @@ package com.eater.eater.service.client;
 import com.eater.eater.dto.client.ClientDTO;
 import com.eater.eater.dto.client.UpdateClientRequest;
 import com.eater.eater.dto.courier.CourierCoordinatesDTO;
-import com.eater.eater.dto.courier.CourierDTO;
 import com.eater.eater.dto.courier.CourierRatingDTO;
 import com.eater.eater.dto.auth.UpdatePasswordRequest;
+import com.eater.eater.enums.ClientStatus;
 import com.eater.eater.model.client.Client;
 import com.eater.eater.model.courier.Courier;
 import com.eater.eater.model.courier.CourierCoordinates;
@@ -50,8 +50,13 @@ public class ClientService {
 
     //  Get client data
     public ClientDTO getClient() {
-        Client currentUser = SecurityUtil.getCurrentUser(Client.class);
-        return clientMapper.toDTO(currentUser);
+        Long currentUserId = SecurityUtil.getCurrentUserId(Client.class);
+        Client currentClient = clientRepository.findById(currentUserId).orElseThrow(
+                () -> new EntityNotFoundException("Client not found"));
+
+        SecurityUtil.validateUserIsBanned(currentClient.getClientStatus());
+
+        return clientMapper.toDTO(currentClient);
     }
 
     // Update user data
@@ -60,7 +65,7 @@ public class ClientService {
         Client currentClient = clientRepository.findById(currentUserId).orElseThrow(
                 () -> new EntityNotFoundException("Client not found"));
 
-        userValidationService.validateUser(updateClientRequest.getPhone(), currentClient.getPhone(), updateClientRequest.getEmail(), currentClient.getEmail());
+        userValidationService.validateUser(updateClientRequest.getPhone(), currentClient.getPhone(), updateClientRequest.getEmail(), currentClient.getEmail(), currentClient.getRole());
         Client response = clientRepository.save(clientMapper.toEntity(updateClientRequest, currentClient));
 
         return clientMapper.toDTO(response);
@@ -91,7 +96,7 @@ public class ClientService {
 
     // Give courier rating
     public CourierRatingDTO setCourierRating(CourierRatingDTO courierRatingDTO) {
-        if(courierRatingDTO.getRating() > 5 || courierRatingDTO.getRating() < 1){
+        if (courierRatingDTO.getRating() > 5 || courierRatingDTO.getRating() < 1) {
             throw new IllegalArgumentException("The rating should be from 1 to 5");
         }
 

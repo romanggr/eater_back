@@ -1,5 +1,6 @@
 package com.eater.eater.model.admin;
 
+import com.eater.eater.enums.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,19 +21,30 @@ public class Admin implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false,unique = true)
+
+    @Column(nullable = false, unique = true)
     private String email;
-    @Column(nullable = false,unique = true)
+
+    @Column(nullable = false, unique = true)
     private String phone;
+
     @Column(nullable = false)
     private String name;
+
     @Column(nullable = false)
     private String password;
+
+    @Column(nullable = false)
+    private boolean isAccepted = false;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Role role = Role.UNVERIFIED_ADMIN;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         // I did it without role entity, I try to do it maximum easy
-        return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"));
+        return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
     }
 
     @Override

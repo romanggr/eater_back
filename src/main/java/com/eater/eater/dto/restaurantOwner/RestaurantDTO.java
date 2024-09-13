@@ -23,6 +23,7 @@ public class RestaurantDTO {
     private Double longitude;
     private LocalTime isOpenFrom;
     private LocalTime isOpenTo;
+    private String avatarUrl;
 
     private List<RestaurantDish> restaurantMenu;
 }

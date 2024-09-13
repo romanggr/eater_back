@@ -1,6 +1,7 @@
 package com.eater.eater.service.auth;
 
 import com.eater.eater.dto.auth.*;
+import com.eater.eater.enums.Role;
 import com.eater.eater.model.admin.Admin;
 import com.eater.eater.model.client.Client;
 import com.eater.eater.model.courier.Courier;
@@ -49,7 +50,7 @@ public class AuthService {
     //registration
     public LoginResponse courierSignup(CourierRegistrationRequest input) {
         //validation
-        userValidationService.validateUser(input.getPhone(),null, input.getEmail(), null, input.getPassword());
+        userValidationService.validateUser(input.getPhone(), null, input.getEmail(), null, input.getPassword(), Role.COURIER);
 
         Courier user = CourierRegistrationMapper.toEntity(input, passwordEncoder);
         courierRepository.save(user);
@@ -70,7 +71,7 @@ public class AuthService {
 
     public LoginResponse adminSignup(AdminRegistrationRequest input) {
         //validation
-        userValidationService.validateUser(input.getPhone(),null, input.getEmail(), null, input.getPassword());
+        userValidationService.validateUser(input.getPhone(), null, input.getEmail(), null, input.getPassword(), Role.ADMIN);
 
         Admin user = AdminRegistrationMapper.toEntity(input, passwordEncoder);
         adminRepository.save(user);
@@ -91,7 +92,7 @@ public class AuthService {
 
     public LoginResponse clientSignup(ClientRegistrationRequest input) {
         //validation
-        userValidationService.validateUser(input.getPhone(),null, input.getEmail(), null, input.getPassword());
+        userValidationService.validateUser(input.getPhone(), null, input.getEmail(), null, input.getPassword(), Role.CLIENT);
 
         Client user = ClientRegistrationMapper.toEntity(input, passwordEncoder);
         clientRepository.save(user);
@@ -113,7 +114,7 @@ public class AuthService {
 
     public LoginResponse restaurantOwnerSignup(RestaurantOwnerRegistrationRequest input) {
         //validation
-        userValidationService.validateUser(input.getPhone(),null, input.getEmail(), null, input.getPassword());
+        userValidationService.validateUser(input.getPhone(), null, input.getEmail(), null, input.getPassword(), Role.RESTAURANT_OWNER);
         RestaurantOwner user = RestaurantOwnerRegistrationMapper.toEntity(input, passwordEncoder);
         restaurantOwnerRepository.save(user);
 

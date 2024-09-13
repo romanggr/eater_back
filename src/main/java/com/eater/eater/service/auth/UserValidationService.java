@@ -1,5 +1,6 @@
 package com.eater.eater.service.auth;
 
+import com.eater.eater.enums.Role;
 import com.eater.eater.exception.EmailAlreadyInUseException;
 import com.eater.eater.exception.PhoneAlreadyInUseException;
 import com.eater.eater.repository.admin.AdminRepository;
@@ -26,26 +27,32 @@ public class UserValidationService {
         this.restaurantOwnerRepository = restaurantOwnerRepository;
     }
 
-    public void validateUniquePhone(String newPhone, String currentPhone) {
-        if (newPhone == null || newPhone.isEmpty()) {
+    public void validateUniquePhone(String phone, String oldPhone, Role role) {
+        if (phone == null || phone.isEmpty()) {
             throw new IllegalArgumentException("Phone number cannot be empty.");
         }
 
-        if (!newPhone.equals(currentPhone)) {
-            if (newPhone.length() < 8 || newPhone.length() > 12) {
+        if (!phone.equals(oldPhone)) {
+            if (phone.length() < 8 || phone.length() > 12) {
                 throw new IllegalArgumentException("Please provide a valid phone number.");
             }
 
-            if (courierRepository.existsByPhone(newPhone) ||
-                    clientRepository.existsByPhone(newPhone) ||
-                    adminRepository.existsByPhone(newPhone) ||
-                    restaurantOwnerRepository.existsByPhone(newPhone)) {
+            boolean exists = switch (role) {
+                case COURIER -> courierRepository.existsByPhone(phone);
+                case CLIENT -> clientRepository.existsByPhone(phone);
+                case ADMIN -> adminRepository.existsByPhone(phone);
+                case RESTAURANT_OWNER -> restaurantOwnerRepository.existsByPhone(phone);
+                default -> throw new IllegalArgumentException("Unsupported role.");
+            };
+
+            if (exists) {
+                System.out.println(123);
                 throw new PhoneAlreadyInUseException("Phone already in use, choose another one");
             }
         }
     }
 
-    public void validateUniqueEmail(String newEmail, String currentEmail) {
+    public void validateUniqueEmail(String newEmail, String currentEmail, Role role) {
         if (newEmail == null || newEmail.isEmpty()) {
             throw new IllegalArgumentException("Email cannot be empty.");
         }
@@ -55,10 +62,15 @@ public class UserValidationService {
                 throw new IllegalArgumentException("Please provide a valid email.");
             }
 
-            if (courierRepository.existsByEmail(newEmail) ||
-                    clientRepository.existsByEmail(newEmail) ||
-                    adminRepository.existsByEmail(newEmail) ||
-                    restaurantOwnerRepository.existsByEmail(newEmail)) {
+            boolean exists = switch (role) {
+                case COURIER -> courierRepository.existsByEmail(newEmail);
+                case CLIENT -> clientRepository.existsByEmail(newEmail);
+                case ADMIN -> adminRepository.existsByEmail(newEmail);
+                case RESTAURANT_OWNER -> restaurantOwnerRepository.existsByEmail(newEmail);
+                default -> throw new IllegalArgumentException("Unsupported role.");
+            };
+
+            if (exists) {
                 throw new EmailAlreadyInUseException("Email already in use, choose another one");
             }
         }
@@ -79,14 +91,14 @@ public class UserValidationService {
         }
     }
 
-    public void validateUser(String phone, String oldPhone, String email, String oldEmail, String password) {
-        validateUniquePhone(phone, oldPhone);
-        validateUniqueEmail(email, oldEmail);
+    public void validateUser(String phone, String oldPhone, String email, String oldEmail, String password, Role role) {
+        validateUniquePhone(phone, oldPhone, role);
+        validateUniqueEmail(email, oldEmail, role);
         validatePassword(password);
     }
 
-    public void validateUser(String phone, String oldPhone, String email, String oldEmail) {
-        validateUniquePhone(phone, oldPhone);
-        validateUniqueEmail(email, oldEmail);
+    public void validateUser(String phone, String oldPhone, String email, String oldEmail, Role role) {
+        validateUniquePhone(phone, oldPhone, role);
+        validateUniqueEmail(email, oldEmail, role);
     }
 }

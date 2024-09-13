@@ -1,9 +1,14 @@
 package com.eater.eater.utils.mapper.client;
 
+import com.eater.eater.dto.admin.ClientsForAdminDTO;
 import com.eater.eater.dto.client.ClientDTO;
 import com.eater.eater.dto.client.UpdateClientRequest;
 import com.eater.eater.model.client.Client;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class ClientMapper {
@@ -22,6 +27,8 @@ public class ClientMapper {
         clientDTO.setEmail(client.getEmail());
         clientDTO.setPhone(client.getPhone());
         clientDTO.setAvatarUrl(client.getAvatarUrl());
+        clientDTO.setRole(client.getRole());
+        clientDTO.setClientStatus(client.getClientStatus());
 
         return clientDTO;
     }
@@ -40,5 +47,23 @@ public class ClientMapper {
         client.setAvatarUrl(clientDTO.getAvatarUrl());
 
         return client;
+    }
+
+    public List<ClientsForAdminDTO> allClientToDTO(List<Client> clients) {
+        if (clients == null || clients.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        return clients.stream()
+                .map(client -> {
+                    ClientsForAdminDTO dto = new ClientsForAdminDTO();
+                    dto.setId(client.getId());
+                    dto.setName(client.getName());
+                    dto.setPhone(client.getPhone());
+                    dto.setAvatarUrl(client.getAvatarUrl());
+                    dto.setClientStatus(client.getClientStatus());
+                    return dto;
+                })
+                .collect(Collectors.toList());
     }
 }

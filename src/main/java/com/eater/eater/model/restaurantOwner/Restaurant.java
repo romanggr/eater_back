@@ -25,6 +25,7 @@ public class Restaurant {
     private Long id;
     private String name;
     private String description;
+    private String avatarUrl;
     private String address;
     private Double latitude;
     private Double longitude;

@@ -1,5 +1,7 @@
 package com.eater.eater.model.courier;
 
+import com.eater.eater.enums.CourierStatus;
+import com.eater.eater.enums.Role;
 import com.eater.eater.enums.TransportType;
 import com.eater.eater.model.orders.Orders;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -39,11 +41,16 @@ public class Courier implements UserDetails {
     private String avatarUrl;
 
     @Column(nullable = false)
-    private boolean isActive = false;
+    @Enumerated(EnumType.STRING)
+    private TransportType transportType;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private TransportType transportType;
+    private CourierStatus courierStatus = CourierStatus.UNCONFIRMED;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Role role = Role.COURIER;
 
     @OneToMany(mappedBy = "courier")
     @JsonIgnoreProperties("courier")
@@ -58,10 +65,11 @@ public class Courier implements UserDetails {
     private List<CourierRating> rating;
 
 
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         // I did it without role entity, I try to do it maximum easy
-        return List.of(new SimpleGrantedAuthority("ROLE_COURIER"));
+        return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
     }
 
     @Override

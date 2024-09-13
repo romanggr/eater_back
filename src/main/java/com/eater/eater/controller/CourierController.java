@@ -54,7 +54,7 @@ public class CourierController {
         return ResponseEntity.ok(response);
     }
 
-   // Get courier rating
+
 
 
     //todo Accept order

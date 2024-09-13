@@ -1,5 +1,6 @@
 package com.eater.eater.utils.mapper.restaurantOwner;
 
+import com.eater.eater.dto.admin.RestaurantOwnersForAdminDTO;
 import com.eater.eater.dto.restaurantOwner.RestaurantDTO;
 import com.eater.eater.dto.restaurantOwner.RestaurantOwnerDTO;
 import com.eater.eater.dto.restaurantOwner.UpdateRestaurantOwnerRequest;
@@ -7,6 +8,10 @@ import com.eater.eater.dto.restaurantOwner.UpdateRestaurantRequest;
 import com.eater.eater.model.restaurantOwner.Restaurant;
 import com.eater.eater.model.restaurantOwner.RestaurantOwner;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class RestaurantOwnerMapper {
@@ -31,36 +36,23 @@ public class RestaurantOwnerMapper {
         return restaurantOwner;
     }
 
-    public RestaurantDTO restaurantToDTO(Restaurant restaurant) {
-        if (restaurant == null) return null;
+    public List<RestaurantOwnersForAdminDTO> allRestaurantOwnerToDTO(List<RestaurantOwner> restaurantOwners) {
+        if (restaurantOwners == null || restaurantOwners.isEmpty()) {
+            return new ArrayList<>();
+        }
 
-        RestaurantDTO restaurantDTO = new RestaurantDTO();
-        restaurantDTO.setId(restaurant.getId());
-        restaurantDTO.setName(restaurant.getName());
-        restaurantDTO.setDescription(restaurant.getDescription());
-        restaurantDTO.setAddress(restaurant.getAddress());
-        restaurantDTO.setLatitude(restaurant.getLatitude());
-        restaurantDTO.setLongitude(restaurant.getLongitude());
-        restaurantDTO.setIsOpenFrom(restaurant.getIsOpenFrom());
-        restaurantDTO.setIsOpenTo(restaurant.getIsOpenTo());
-        restaurantDTO.setRestaurantMenu(restaurant.getRestaurantDishes());
-
-        return restaurantDTO;
+        return restaurantOwners.stream()
+                .map(owner -> {
+                    RestaurantOwnersForAdminDTO dto = new RestaurantOwnersForAdminDTO();
+                    dto.setId(owner.getId());
+                    dto.setName(owner.getName());
+                    dto.setIsOpenFrom(owner.getRestaurant().getIsOpenFrom());
+                    dto.setIsOpenTo(owner.getRestaurant().getIsOpenTo());
+                    dto.setAvatarUrl(owner.getRestaurant().getAvatarUrl());
+                    dto.setPhoneNumber(owner.getPhone());
+                    dto.setRestaurantOwnerStatus(owner.getRestaurantOwnerStatus());
+                    return dto;
+                })
+                .collect(Collectors.toList());
     }
-    public Restaurant restaurantToEntity(RestaurantDTO restaurantDTO,RestaurantOwner restaurantOwner) {
-        if (restaurantDTO == null) return null;
-
-        Restaurant restaurant = new Restaurant();
-        restaurant.setName(restaurantDTO.getName());
-        restaurant.setDescription(restaurantDTO.getDescription());
-        restaurant.setIsOpenFrom(restaurantDTO.getIsOpenFrom());
-        restaurant.setIsOpenTo(restaurantDTO.getIsOpenTo());
-        restaurant.setLatitude(restaurantDTO.getLatitude());
-        restaurant.setLongitude(restaurantDTO.getLongitude());
-        restaurant.setAddress(restaurantDTO.getAddress());
-        restaurant.setRestaurantOwner(restaurantOwner);
-
-        return restaurant;
-    }
-
 }

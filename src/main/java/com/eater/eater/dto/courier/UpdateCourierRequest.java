@@ -3,8 +3,6 @@ package com.eater.eater.dto.courier;
 import com.eater.eater.enums.TransportType;
 import lombok.Data;
 
-import java.time.LocalDateTime;
-
 @Data
 public class UpdateCourierRequest {
     private String name;

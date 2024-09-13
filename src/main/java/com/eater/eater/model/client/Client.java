@@ -1,5 +1,7 @@
 package com.eater.eater.model.client;
 
+import com.eater.eater.enums.ClientStatus;
+import com.eater.eater.enums.Role;
 import com.eater.eater.model.orders.Orders;
 import com.eater.eater.model.courier.CourierRating;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -22,22 +24,38 @@ public class Client implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(nullable = false)
     private String name;
+
     @Column(nullable = false)
     private String address;
+
     @Column(nullable = false)
     private Double latitude;
+
     @Column(nullable = false)
     private Double longitude;
+
     @Column(unique = true, nullable = false)
     private String email;
+
     @Column(unique = true, nullable = false)
     private String phone;
+
     @Column(nullable = false)
     private String avatarUrl;
+
     @Column(nullable = false)
     private String password;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private ClientStatus clientStatus = ClientStatus.ACTIVE;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Role role = Role.CLIENT;
 
     @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnoreProperties("client")
@@ -51,7 +69,7 @@ public class Client implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         // I did it without role entity, I try to do it maximum easy
-        return List.of(new SimpleGrantedAuthority("ROLE_CLIENT"));
+        return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
     }
 
     @Override

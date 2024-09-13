@@ -1,5 +1,7 @@
 package com.eater.eater.dto.courier;
 
+import com.eater.eater.enums.CourierStatus;
+import com.eater.eater.enums.Role;
 import com.eater.eater.enums.TransportType;
 import lombok.*;
 
@@ -13,7 +15,8 @@ public class CourierDTO {
     private String phone;
     private String avatarUrl;
     private TransportType transportType;
-    private Boolean isActive;
+    private CourierStatus courierStatus;
+    private Role role;
 
     private double rating;
 
