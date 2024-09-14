@@ -4,7 +4,6 @@ package com.eater.eater.dto.client;
 import com.eater.eater.enums.ClientStatus;
 import com.eater.eater.enums.Role;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
 public class ClientDTO {

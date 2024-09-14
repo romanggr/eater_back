@@ -1,6 +1,5 @@
 package com.eater.eater.dto.restaurantOwner;
 
-import com.eater.eater.model.restaurantOwner.Restaurant;
 import lombok.Data;
 
 @Data

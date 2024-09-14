@@ -1,7 +1,6 @@
 package com.eater.eater.repository.admin;
 
 import com.eater.eater.model.admin.Admin;
-import com.eater.eater.model.courier.Courier;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

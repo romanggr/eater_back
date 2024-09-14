@@ -1,6 +1,5 @@
 package com.eater.eater.model.restaurantOwner;
 
-import com.eater.eater.model.courier.Courier;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

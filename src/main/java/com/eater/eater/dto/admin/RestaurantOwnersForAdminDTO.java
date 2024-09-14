@@ -1,11 +1,9 @@
 package com.eater.eater.dto.admin;
 
 import com.eater.eater.enums.RestaurantOwnerStatus;
-import com.eater.eater.model.restaurantOwner.RestaurantDish;
 import lombok.Data;
 
 import java.time.LocalTime;
-import java.util.List;
 
 @Data
 public class RestaurantOwnersForAdminDTO {

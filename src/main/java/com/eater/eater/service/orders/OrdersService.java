@@ -1,9 +1,5 @@
 package com.eater.eater.service.orders;
 
-import com.eater.eater.repository.client.ClientRepository;
-import com.eater.eater.repository.courier.CourierRepository;
-import com.eater.eater.repository.orders.OrdersRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service

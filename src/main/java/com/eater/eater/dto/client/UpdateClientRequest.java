@@ -1,7 +1,6 @@
 package com.eater.eater.dto.client;
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
 public class UpdateClientRequest {

@@ -1,7 +1,6 @@
 package com.eater.eater.dto.admin;
 
 import com.eater.eater.enums.ClientStatus;
-import com.eater.eater.enums.Role;
 import lombok.Data;
 
 @Data

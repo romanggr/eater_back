@@ -3,15 +3,7 @@ package com.eater.eater.utils.mapper.admin;
 import com.eater.eater.dto.admin.*;
 import com.eater.eater.dto.auth.AdminRegistrationRequest;
 import com.eater.eater.model.admin.Admin;
-import com.eater.eater.model.client.Client;
-import com.eater.eater.model.courier.Courier;
-import com.eater.eater.model.restaurantOwner.RestaurantOwner;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Component;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class AdminMapper {
     public static AdminDTO toDTO(Admin admin) {

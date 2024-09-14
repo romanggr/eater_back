@@ -4,8 +4,6 @@ import com.eater.eater.dto.courier.CourierRatingDTO;
 import com.eater.eater.model.client.Client;
 import com.eater.eater.model.courier.Courier;
 import com.eater.eater.model.courier.CourierRating;
-import com.eater.eater.service.client.ClientService;
-import org.springframework.stereotype.Component;
 
 public class CourierRatingMapper {
     public static CourierRatingDTO toDTO(CourierRating courierRating){

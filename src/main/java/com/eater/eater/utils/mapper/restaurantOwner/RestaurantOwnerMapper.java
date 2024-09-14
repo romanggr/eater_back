@@ -2,14 +2,10 @@ package com.eater.eater.utils.mapper.restaurantOwner;
 
 import com.eater.eater.dto.admin.RestaurantOwnersForAdminDTO;
 import com.eater.eater.dto.auth.RestaurantOwnerRegistrationRequest;
-import com.eater.eater.dto.restaurantOwner.RestaurantDTO;
 import com.eater.eater.dto.restaurantOwner.RestaurantOwnerDTO;
 import com.eater.eater.dto.restaurantOwner.UpdateRestaurantOwnerRequest;
-import com.eater.eater.dto.restaurantOwner.UpdateRestaurantRequest;
-import com.eater.eater.model.restaurantOwner.Restaurant;
 import com.eater.eater.model.restaurantOwner.RestaurantOwner;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -4,7 +4,6 @@ import com.eater.eater.dto.restaurantOwner.RestaurantDTO;
 import com.eater.eater.dto.restaurantOwner.UpdateRestaurantRequest;
 import com.eater.eater.model.restaurantOwner.Restaurant;
 import com.eater.eater.model.restaurantOwner.RestaurantOwner;
-import org.springframework.stereotype.Component;
 
 
 public class RestaurantMapper {
