@@ -39,7 +39,7 @@ public class Admin implements UserDetails {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private Role role = Role.UNVERIFIED_ADMIN;
+    private Role role = Role.ADMIN;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

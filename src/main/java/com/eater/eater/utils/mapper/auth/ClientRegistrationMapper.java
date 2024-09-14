@@ -1,6 +1,9 @@
 package com.eater.eater.utils.mapper.auth;
 
+import com.eater.eater.dto.admin.UpdateAdminRequest;
 import com.eater.eater.dto.auth.ClientRegistrationRequest;
+import com.eater.eater.dto.client.UpdateClientRequest;
+import com.eater.eater.model.admin.Admin;
 import com.eater.eater.model.client.Client;
 import com.eater.eater.model.courier.CourierRating;
 import com.eater.eater.model.orders.Orders;
@@ -24,4 +27,22 @@ public class ClientRegistrationMapper {
 
         return client;
     }
+
+    public static Client updateRequestToEntity(UpdateClientRequest clientDTO, Client client) {
+        if (clientDTO == null) {
+            return null;
+        }
+
+        client.setName(clientDTO.getName());
+        client.setAddress(clientDTO.getAddress());
+        client.setLatitude(clientDTO.getLatitude());
+        client.setLongitude(clientDTO.getLongitude());
+        client.setEmail(clientDTO.getEmail());
+        client.setPhone(clientDTO.getPhone());
+        client.setAvatarUrl(clientDTO.getAvatarUrl());
+
+        return client;
+    }
+
+
 }

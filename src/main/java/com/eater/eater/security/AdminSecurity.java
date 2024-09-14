@@ -1,6 +1,6 @@
 package com.eater.eater.security;
 
-import com.eater.eater.exception.UnconfirmedAdminException;
+import com.eater.eater.exception.AdminUnverifiedException;
 import com.eater.eater.model.admin.Admin;
 import com.eater.eater.repository.admin.AdminRepository;
 import org.springframework.stereotype.Component;
@@ -19,7 +19,7 @@ public class AdminSecurity {
                 () -> new IllegalArgumentException("Admin not found"));
 
         if(!admin.isAccepted()){
-            throw new UnconfirmedAdminException("Your account is not verified, please wait for another administrator to verify you");
+            throw new AdminUnverifiedException("Your account is not verified, please wait for another administrator to verify you");
         }
     }
 

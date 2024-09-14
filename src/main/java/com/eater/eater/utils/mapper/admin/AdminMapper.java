@@ -29,14 +29,6 @@ public class AdminMapper {
         return adminDTO;
     }
 
-    public Admin updateRequestToEntity(UpdateAdminRequest request, Admin currentAdmin) {
-        if (request == null || currentAdmin == null) return null;
 
-        currentAdmin.setEmail(request.getEmail());
-        currentAdmin.setPhone(request.getPhone());
-        currentAdmin.setName(request.getName());
-
-        return currentAdmin;
-    }
 
 }

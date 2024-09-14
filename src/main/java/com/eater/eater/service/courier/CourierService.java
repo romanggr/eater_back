@@ -46,32 +46,6 @@ public class CourierService {
         return courierMapper.toDTO(courier);
     }
 
-    //update courier
-    public CourierDTO updateCourier(UpdateCourierRequest updateCourierRequest) {
-        Long currentUserId = SecurityUtil.getCurrentUserId(Courier.class);
-
-        Courier currentCourier = courierRepository.findById(currentUserId).orElseThrow(
-                () -> new EntityNotFoundException("Courier not found"));
-
-        userValidationService.validateUser(updateCourierRequest.getPhone(), currentCourier.getPhone(), updateCourierRequest.getEmail(), currentCourier.getEmail(), currentCourier.getRole());
-        Courier courier = courierRepository.save(courierMapper.updateRequestToEntity(updateCourierRequest, currentCourier));
-
-        return courierMapper.toDTO(courier);
-    }
-
-    // update courier password
-    public CourierDTO updateCourierPassword(UpdatePasswordRequest request) {
-        Long currentUserId = SecurityUtil.getCurrentUserId(Courier.class);
-        Courier currentCourier = courierRepository.findById(currentUserId).orElseThrow(
-                () -> new EntityNotFoundException("Courier not found"));
-
-        userValidationService.validatePassword(request.getPassword());
-        currentCourier.setPassword(passwordEncoder.encode(request.getPassword()));
-        Courier courier = courierRepository.save(currentCourier);
-
-        return courierMapper.toDTO(courier);
-    }
-
     // Update coordinates
     public CourierDTO updateCourierCoordinates(CourierCoordinatesDTO courierCoordinatesDTO) {
         Courier currentUser = SecurityUtil.getCurrentUser(Courier.class);

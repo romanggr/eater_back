@@ -1,10 +1,12 @@
 package com.eater.eater.controller;
 
+import com.eater.eater.dto.auth.LoginResponse;
 import com.eater.eater.dto.auth.UpdatePasswordRequest;
 import com.eater.eater.dto.client.ClientDTO;
 import com.eater.eater.dto.client.UpdateClientRequest;
 import com.eater.eater.dto.courier.CourierCoordinatesDTO;
 import com.eater.eater.dto.courier.CourierRatingDTO;
+import com.eater.eater.service.auth.AuthService;
 import com.eater.eater.service.client.ClientService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,9 +15,11 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/client")
 public class ClientController {
     private final ClientService clientService;
+    private final AuthService authService;
 
-    public ClientController(ClientService clientService) {
+    public ClientController(ClientService clientService, AuthService authService) {
         this.clientService = clientService;
+        this.authService = authService;
     }
 
     @GetMapping("/getClient")
@@ -26,13 +30,13 @@ public class ClientController {
     }
 
     @PutMapping("/updateClient")
-    public ResponseEntity<ClientDTO> updateClient(@RequestBody UpdateClientRequest updateClientRequest) {
-        ClientDTO response = clientService.updateClient(updateClientRequest);
+    public ResponseEntity<LoginResponse> updateClient(@RequestBody UpdateClientRequest updateClientRequest) {
+        LoginResponse response = authService.updateClient(updateClientRequest);
         return ResponseEntity.ok(response);
     }
     @PutMapping("/updatePassword")
-    public ResponseEntity<ClientDTO> updatePassword(@RequestBody UpdatePasswordRequest request) {
-        ClientDTO response = clientService.updateCourierPassword(request);
+    public ResponseEntity<LoginResponse> updatePassword(@RequestBody UpdatePasswordRequest request) {
+        LoginResponse response = authService.updateClientPassword(request);
         return ResponseEntity.ok(response);
     }
 

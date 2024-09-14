@@ -33,21 +33,21 @@ public class ClientMapper {
         return clientDTO;
     }
 
-    public Client toEntity(UpdateClientRequest clientDTO, Client client) {
-        if (clientDTO == null) {
-            return null;
-        }
-
-        client.setName(clientDTO.getName());
-        client.setAddress(clientDTO.getAddress());
-        client.setLatitude(clientDTO.getLatitude());
-        client.setLongitude(clientDTO.getLongitude());
-        client.setEmail(clientDTO.getEmail());
-        client.setPhone(clientDTO.getPhone());
-        client.setAvatarUrl(clientDTO.getAvatarUrl());
-
-        return client;
-    }
+//    public Client updateRequestToEntity(UpdateClientRequest clientDTO, Client client) {
+//        if (clientDTO == null) {
+//            return null;
+//        }
+//
+//        client.setName(clientDTO.getName());
+//        client.setAddress(clientDTO.getAddress());
+//        client.setLatitude(clientDTO.getLatitude());
+//        client.setLongitude(clientDTO.getLongitude());
+//        client.setEmail(clientDTO.getEmail());
+//        client.setPhone(clientDTO.getPhone());
+//        client.setAvatarUrl(clientDTO.getAvatarUrl());
+//
+//        return client;
+//    }
 
     public List<ClientsForAdminDTO> allClientToDTO(List<Client> clients) {
         if (clients == null || clients.isEmpty()) {

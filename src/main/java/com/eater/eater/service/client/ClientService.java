@@ -59,32 +59,6 @@ public class ClientService {
         return clientMapper.toDTO(currentClient);
     }
 
-    // Update user data
-    public ClientDTO updateClient(UpdateClientRequest updateClientRequest) {
-        Long currentUserId = SecurityUtil.getCurrentUserId(Client.class);
-        Client currentClient = clientRepository.findById(currentUserId).orElseThrow(
-                () -> new EntityNotFoundException("Client not found"));
-
-        userValidationService.validateUser(updateClientRequest.getPhone(), currentClient.getPhone(), updateClientRequest.getEmail(), currentClient.getEmail(), currentClient.getRole());
-        Client response = clientRepository.save(clientMapper.toEntity(updateClientRequest, currentClient));
-
-        return clientMapper.toDTO(response);
-    }
-
-
-    // update client password
-    public ClientDTO updateCourierPassword(UpdatePasswordRequest request) {
-        Long currentUserId = SecurityUtil.getCurrentUserId(Client.class);
-        Client user = clientRepository.findById(currentUserId).orElseThrow(
-                () -> new EntityNotFoundException("Client not found"));
-
-        userValidationService.validatePassword(request.getPassword());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-        Client client = clientRepository.save(user);
-
-        return clientMapper.toDTO(client);
-    }
-
     // Get courier coordinates
     public CourierCoordinatesDTO getCourierCoordinates(Long courierId) {
         Courier courier = courierRepository.findById(courierId).orElseThrow(

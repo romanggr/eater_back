@@ -26,15 +26,6 @@ public class RestaurantOwnerMapper {
         return ownerDTO;
     }
 
-    public RestaurantOwner updateRequestToEntity(UpdateRestaurantOwnerRequest request, RestaurantOwner restaurantOwner) {
-        if (request == null || restaurantOwner == null) return null;
-
-        restaurantOwner.setName(request.getName());
-        restaurantOwner.setPhone(request.getPhone());
-        restaurantOwner.setEmail(request.getEmail());
-
-        return restaurantOwner;
-    }
 
     public List<RestaurantOwnersForAdminDTO> allRestaurantOwnerToDTO(List<RestaurantOwner> restaurantOwners) {
         if (restaurantOwners == null || restaurantOwners.isEmpty()) {

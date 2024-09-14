@@ -2,13 +2,13 @@ package com.eater.eater.controller;
 
 import com.eater.eater.dto.admin.*;
 import com.eater.eater.dto.auth.BanRequest;
+import com.eater.eater.dto.auth.LoginResponse;
 import com.eater.eater.dto.auth.UpdatePasswordRequest;
 import com.eater.eater.dto.client.ClientDTO;
 import com.eater.eater.dto.courier.CourierDTO;
 import com.eater.eater.dto.restaurantOwner.RestaurantOwnerDTO;
-import com.eater.eater.model.admin.Admin;
-import com.eater.eater.model.restaurantOwner.RestaurantOwner;
 import com.eater.eater.service.admin.AdminService;
+import com.eater.eater.service.auth.AuthService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,9 +18,11 @@ import java.util.List;
 @RequestMapping("/api/v1/admin")
 public class AdminController {
     private final AdminService adminService;
+    private final AuthService authService;
 
-    public AdminController(AdminService adminService) {
+    public AdminController(AdminService adminService, AuthService authService) {
         this.adminService = adminService;
+        this.authService = authService;
     }
 
     // get admin
@@ -32,15 +34,15 @@ public class AdminController {
 
     // update admin
     @PutMapping("/updateAdmin")
-    public ResponseEntity<AdminDTO> updateAdmin(@RequestBody UpdateAdminRequest request) {
-        AdminDTO response = adminService.updateAdmin(request);
+    public ResponseEntity<LoginResponse> updateAdmin(@RequestBody UpdateAdminRequest request) {
+        LoginResponse response = authService.updateAdmin(request);
         return ResponseEntity.ok(response);
     }
 
     // update password
     @PutMapping("/updatePassword")
-    public ResponseEntity<AdminDTO> updatePassword(@RequestBody UpdatePasswordRequest request) {
-        AdminDTO response = adminService.updatePassword(request);
+    public ResponseEntity<LoginResponse> updatePassword(@RequestBody UpdatePasswordRequest request) {
+        LoginResponse response = authService.updateAdminPassword(request);
         return ResponseEntity.ok(response);
     }
 
@@ -125,21 +127,21 @@ public class AdminController {
 
 
     // ban courier (when you ban you also send email that his account was banned)
-    @PutMapping("/banCourier")
+    @PostMapping("/banCourier")
     public ResponseEntity<Long> banCourier(BanRequest request) {
         Long response = adminService.banCourier(request);
         return ResponseEntity.ok(response);
     }
 
     // ban client (when you ban you also send email that his account was banned)
-    @PutMapping("/banClient")
+    @PostMapping("/banClient")
     public ResponseEntity<Long> banClient(BanRequest request) {
         Long response = adminService.banClient(request);
         return ResponseEntity.ok(response);
     }
 
     // ban restaurant owner (when you ban you also send email that his account was banned)
-    @PutMapping("/banRestaurantOwner")
+    @PostMapping("/banRestaurantOwner")
     public ResponseEntity<Long> banRestaurantOwner(BanRequest request) {
         Long response = adminService.banRestaurantOwner(request);
         return ResponseEntity.ok(response);

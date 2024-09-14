@@ -1,6 +1,7 @@
 package com.eater.eater.utils.mapper.auth;
 
 import com.eater.eater.dto.auth.CourierRegistrationRequest;
+import com.eater.eater.dto.courier.UpdateCourierRequest;
 import com.eater.eater.model.courier.CourierCoordinates;
 import com.eater.eater.model.courier.CourierRating;
 import com.eater.eater.model.orders.Orders;
@@ -25,12 +26,25 @@ public class CourierRegistrationMapper {
         courier.setOrders((List<Orders>) input.getOrders());
         courier.setTransportType(input.getTransportType());
 
-        // Handle CourierCoordinates
         CourierCoordinates coordinates = input.getCourierCoordinates();
         if (coordinates != null) {
             coordinates.setCourier(courier);
             courier.setCoordinates(coordinates);
         }
+
+        return courier;
+    }
+
+    public static Courier updateRequestToEntity(UpdateCourierRequest updateCourierRequest, Courier courier) {
+        if (updateCourierRequest == null) {
+            return null;
+        }
+
+        courier.setName(updateCourierRequest.getName());
+        courier.setEmail(updateCourierRequest.getEmail());
+        courier.setPhone(updateCourierRequest.getPhone());
+        courier.setAvatarUrl(updateCourierRequest.getAvatarUrl());
+        courier.setTransportType(updateCourierRequest.getTransportType());
 
         return courier;
     }

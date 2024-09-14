@@ -49,19 +49,7 @@ public class CourierMapper {
     }
 
 
-    public Courier updateRequestToEntity(UpdateCourierRequest updateCourierRequest, Courier courier) {
-        if (updateCourierRequest == null) {
-            return null;
-        }
 
-        courier.setName(updateCourierRequest.getName());
-        courier.setEmail(updateCourierRequest.getEmail());
-        courier.setPhone(updateCourierRequest.getPhone());
-        courier.setAvatarUrl(updateCourierRequest.getAvatarUrl());
-        courier.setTransportType(updateCourierRequest.getTransportType());
-
-        return courier;
-    }
 
     public CourierCoordinates coordinatesToEntity(CourierCoordinates courierCoordinates, CourierCoordinatesDTO courierCoordinatesDTO) {
         courierCoordinates.setLatitude(courierCoordinatesDTO.getLatitude());

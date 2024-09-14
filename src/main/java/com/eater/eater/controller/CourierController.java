@@ -1,8 +1,9 @@
 package com.eater.eater.controller;
 
+import com.eater.eater.dto.auth.LoginResponse;
 import com.eater.eater.dto.auth.UpdatePasswordRequest;
 import com.eater.eater.dto.courier.*;
-import com.eater.eater.model.courier.CourierRating;
+import com.eater.eater.service.auth.AuthService;
 import com.eater.eater.service.courier.CourierService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -12,10 +13,12 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/courier")
 public class CourierController {
     private final CourierService courierService;
+    private final AuthService authService;
 
     @Autowired
-    public CourierController(CourierService courierService) {
+    public CourierController(CourierService courierService, AuthService authService) {
         this.courierService = courierService;
+        this.authService = authService;
     }
 
     // Get courier data
@@ -28,8 +31,15 @@ public class CourierController {
 
     // Update user data
     @PutMapping("/updateCourier")
-    public ResponseEntity<CourierDTO> updateCourier(@RequestBody UpdateCourierRequest courierDTO){
-        CourierDTO response = courierService.updateCourier(courierDTO);
+    public ResponseEntity<LoginResponse> updateCourier(@RequestBody UpdateCourierRequest courierDTO){
+        LoginResponse response = authService.updateCourier(courierDTO);
+        return ResponseEntity.ok(response);
+    }
+
+    // Update password
+    @PutMapping("/updatePassword")
+    public ResponseEntity<LoginResponse> updatePassword(@RequestBody UpdatePasswordRequest request) {
+        LoginResponse response = authService.updateCourierPassword(request);
         return ResponseEntity.ok(response);
     }
 
@@ -37,13 +47,6 @@ public class CourierController {
     @PutMapping("/updateCoordinates")
     public ResponseEntity<CourierDTO> updateCoordinates(@RequestBody CourierCoordinatesDTO courierCoordinatesDTO) {
         CourierDTO response = courierService.updateCourierCoordinates(courierCoordinatesDTO);
-        return ResponseEntity.ok(response);
-    }
-
-    // Update password
-    @PutMapping("/updatePassword")
-    public ResponseEntity<CourierDTO> updatePassword(@RequestBody UpdatePasswordRequest request) {
-        CourierDTO response = courierService.updateCourierPassword(request);
         return ResponseEntity.ok(response);
     }
 

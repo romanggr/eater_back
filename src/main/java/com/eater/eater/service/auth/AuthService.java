@@ -1,6 +1,11 @@
 package com.eater.eater.service.auth;
 
+import com.eater.eater.dto.admin.AdminDTO;
+import com.eater.eater.dto.admin.UpdateAdminRequest;
 import com.eater.eater.dto.auth.*;
+import com.eater.eater.dto.client.UpdateClientRequest;
+import com.eater.eater.dto.courier.UpdateCourierRequest;
+import com.eater.eater.dto.restaurantOwner.UpdateRestaurantOwnerRequest;
 import com.eater.eater.enums.Role;
 import com.eater.eater.model.admin.Admin;
 import com.eater.eater.model.client.Client;
@@ -11,10 +16,12 @@ import com.eater.eater.repository.client.ClientRepository;
 import com.eater.eater.repository.courier.CourierRepository;
 import com.eater.eater.repository.restaurantOwner.RestaurantOwnerRepository;
 import com.eater.eater.security.JwtService;
+import com.eater.eater.security.SecurityUtil;
 import com.eater.eater.utils.mapper.auth.AdminRegistrationMapper;
 import com.eater.eater.utils.mapper.auth.ClientRegistrationMapper;
 import com.eater.eater.utils.mapper.auth.CourierRegistrationMapper;
 import com.eater.eater.utils.mapper.auth.RestaurantOwnerRegistrationMapper;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -195,5 +202,220 @@ public class AuthService {
         return loginResponse;
     }
 
+
+    // update user
+    public LoginResponse updateAdmin(UpdateAdminRequest request) {
+        Long currentUserId = SecurityUtil.getCurrentUserId(Admin.class);
+        Admin currentUser = adminRepository.findById(currentUserId)
+                .orElseThrow(() -> new EntityNotFoundException("Admin not found"));
+        userValidationService.validateUser(request.getPhone(), currentUser.getPhone(), request.getEmail(), currentUser.getEmail(), currentUser.getRole());
+
+        if (!passwordEncoder.matches(request.getOldPassword(), currentUser.getPassword())) {
+            throw new IllegalArgumentException("This password is incorrect");
+        }
+
+        Admin updatedUser = AdminRegistrationMapper.updateRequestToEntity(request, currentUser);
+        adminRepository.save(updatedUser);
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        request.getEmail(),
+                        request.getOldPassword()
+                )
+        );
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String jwtToken = jwtService.generateToken(updatedUser);
+
+        LoginResponse response = new LoginResponse();
+        response.setToken(jwtToken);
+        return response;
+    }
+
+    public LoginResponse updateCourier(UpdateCourierRequest request) {
+        Long currentUserId = SecurityUtil.getCurrentUserId(Courier.class);
+        Courier currentUser = courierRepository.findById(currentUserId)
+                .orElseThrow(() -> new EntityNotFoundException("Courier not found"));
+        userValidationService.validateUser(request.getPhone(), currentUser.getPhone(), request.getEmail(), currentUser.getEmail(), currentUser.getRole());
+
+        if (!passwordEncoder.matches(request.getOldPassword(), currentUser.getPassword())) {
+            throw new IllegalArgumentException("This password is incorrect");
+        }
+
+        Courier updatedUser = CourierRegistrationMapper.updateRequestToEntity(request, currentUser);
+        courierRepository.save(updatedUser);
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        request.getEmail(),
+                        request.getOldPassword()
+                )
+        );
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String jwtToken = jwtService.generateToken(updatedUser);
+
+        LoginResponse response = new LoginResponse();
+        response.setToken(jwtToken);
+        return response;
+    }
+
+    public LoginResponse updateClient(UpdateClientRequest request) {
+        Long currentUserId = SecurityUtil.getCurrentUserId(Client.class);
+        Client currentUser = clientRepository.findById(currentUserId)
+                .orElseThrow(() -> new EntityNotFoundException("Client not found"));
+        userValidationService.validateUser(request.getPhone(), currentUser.getPhone(), request.getEmail(), currentUser.getEmail(), currentUser.getRole());
+
+        if (!passwordEncoder.matches(request.getOldPassword(), currentUser.getPassword())) {
+            throw new IllegalArgumentException("This password is incorrect");
+        }
+
+        Client updatedUser = ClientRegistrationMapper.updateRequestToEntity(request, currentUser);
+        clientRepository.save(updatedUser);
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        request.getEmail(),
+                        request.getOldPassword()
+                )
+        );
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String jwtToken = jwtService.generateToken(updatedUser);
+
+        LoginResponse response = new LoginResponse();
+        response.setToken(jwtToken);
+        return response;
+    }
+
+    public LoginResponse updateRestaurantOwner(UpdateRestaurantOwnerRequest request) {
+        Long currentUserId = SecurityUtil.getCurrentUserId(RestaurantOwner.class);
+        RestaurantOwner currentUser = restaurantOwnerRepository.findById(currentUserId)
+                .orElseThrow(() -> new EntityNotFoundException("Restaurant owner not found"));
+        userValidationService.validateUser(request.getPhone(), currentUser.getPhone(), request.getEmail(), currentUser.getEmail(), currentUser.getRole());
+
+        if (!passwordEncoder.matches(request.getOldPassword(), currentUser.getPassword())) {
+            throw new IllegalArgumentException("This password is incorrect");
+        }
+
+        RestaurantOwner updatedUser = RestaurantOwnerRegistrationMapper.updateRequestToEntity(request, currentUser);
+        restaurantOwnerRepository.save(updatedUser);
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        request.getEmail(),
+                        request.getOldPassword()
+                )
+        );
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String jwtToken = jwtService.generateToken(updatedUser);
+
+        LoginResponse response = new LoginResponse();
+        response.setToken(jwtToken);
+        return response;
+    }
+
+
+    // update user password
+    public LoginResponse updateAdminPassword(UpdatePasswordRequest request) {
+        Long currentUserId = SecurityUtil.getCurrentUserId(Admin.class);
+        Admin currentUser = adminRepository.findById(currentUserId)
+                .orElseThrow(() -> new EntityNotFoundException("Admin not found"));
+        userValidationService.validatePassword(request.getPassword());
+
+        if (!passwordEncoder.matches(request.getOldPassword(), currentUser.getPassword())) {
+            throw new IllegalArgumentException("This password is incorrect");
+        }
+
+        currentUser.setPassword(passwordEncoder.encode(request.getPassword()));
+        Admin updatedAdmin = adminRepository.save(currentUser);
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        currentUser.getEmail(),
+                        request.getPassword()
+                )
+        );
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String jwtToken = jwtService.generateToken(updatedAdmin);
+
+        LoginResponse response = new LoginResponse();
+        response.setToken(jwtToken);
+        return response;
+    }
+
+    public LoginResponse updateCourierPassword(UpdatePasswordRequest request) {
+        Long currentUserId = SecurityUtil.getCurrentUserId(Courier.class);
+        Courier currentUser = courierRepository.findById(currentUserId)
+                .orElseThrow(() -> new EntityNotFoundException("Admin not found"));
+        userValidationService.validatePassword(request.getPassword());
+
+        if (!passwordEncoder.matches(request.getOldPassword(), currentUser.getPassword())) {
+            throw new IllegalArgumentException("This password is incorrect");
+        }
+
+        currentUser.setPassword(passwordEncoder.encode(request.getPassword()));
+        Courier updatedUser = courierRepository.save(currentUser);
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        currentUser.getEmail(),
+                        request.getPassword()
+                )
+        );
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String jwtToken = jwtService.generateToken(updatedUser);
+
+        LoginResponse response = new LoginResponse();
+        response.setToken(jwtToken);
+        return response;
+    }
+
+    public LoginResponse updateClientPassword(UpdatePasswordRequest request) {
+        Long currentUserId = SecurityUtil.getCurrentUserId(Courier.class);
+        Client currentUser = clientRepository.findById(currentUserId)
+                .orElseThrow(() -> new EntityNotFoundException("Admin not found"));
+        userValidationService.validatePassword(request.getPassword());
+
+        if (!passwordEncoder.matches(request.getOldPassword(), currentUser.getPassword())) {
+            throw new IllegalArgumentException("This password is incorrect");
+        }
+
+        currentUser.setPassword(passwordEncoder.encode(request.getPassword()));
+        Client updatedUser = clientRepository.save(currentUser);
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        currentUser.getEmail(),
+                        request.getPassword()
+                )
+        );
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String jwtToken = jwtService.generateToken(updatedUser);
+
+        LoginResponse response = new LoginResponse();
+        response.setToken(jwtToken);
+        return response;
+    }
+
+    public LoginResponse updateRestaurantOwnerPassword(UpdatePasswordRequest request) {
+        Long currentUserId = SecurityUtil.getCurrentUserId(Courier.class);
+        RestaurantOwner currentUser = restaurantOwnerRepository.findById(currentUserId)
+                .orElseThrow(() -> new EntityNotFoundException("Admin not found"));
+        userValidationService.validatePassword(request.getPassword());
+
+        if (!passwordEncoder.matches(request.getOldPassword(), currentUser.getPassword())) {
+            throw new IllegalArgumentException("This password is incorrect");
+        }
+
+        currentUser.setPassword(passwordEncoder.encode(request.getPassword()));
+        RestaurantOwner updatedUser = restaurantOwnerRepository.save(currentUser);
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        currentUser.getEmail(),
+                        request.getPassword()
+                )
+        );
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String jwtToken = jwtService.generateToken(updatedUser);
+
+        LoginResponse response = new LoginResponse();
+        response.setToken(jwtToken);
+        return response;
+    }
 
 }

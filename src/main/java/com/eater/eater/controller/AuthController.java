@@ -63,14 +63,14 @@ public class AuthController {
 
     @PostMapping("/admin/login")
     public ResponseEntity<LoginResponse> adminAuthenticate(@RequestBody LoginRequest loginRequest) {
-        LoginResponse jwt = authService.courierAuthenticate(loginRequest);
+        LoginResponse jwt = authService.adminAuthenticate(loginRequest);
 
         return ResponseEntity.ok(jwt);
     }
 
     @PostMapping("/restaurantOwner/login")
     public ResponseEntity<LoginResponse> restaurantOwnerAuthenticate(@RequestBody LoginRequest loginRequest) {
-        LoginResponse jwt = authService.courierAuthenticate(loginRequest);
+        LoginResponse jwt = authService.restaurantOwnerAuthenticate(loginRequest);
 
         return ResponseEntity.ok(jwt);
     }

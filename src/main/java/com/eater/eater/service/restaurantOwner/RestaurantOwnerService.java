@@ -24,16 +24,12 @@ public class RestaurantOwnerService {
     private final RestaurantMapper restaurantMapper;
     private final RestaurantOwnerMapper restaurantOwnerMapper;
 
-    private final UserValidationService userValidationService;
-    private final PasswordEncoder passwordEncoder;
 
     public RestaurantOwnerService(RestaurantOwnerRepository restaurantOwnerRepository, RestaurantRepository restaurantRepository, RestaurantOwnerMapper restaurantOwnerMapper, RestaurantMapper restaurantMapper, UserValidationService userValidationService, PasswordEncoder passwordEncoder) {
         this.restaurantOwnerRepository = restaurantOwnerRepository;
         this.restaurantRepository = restaurantRepository;
         this.restaurantMapper = restaurantMapper;
         this.restaurantOwnerMapper = restaurantOwnerMapper;
-        this.userValidationService = userValidationService;
-        this.passwordEncoder = passwordEncoder;
     }
 
     //get restaurant owner
@@ -47,31 +43,6 @@ public class RestaurantOwnerService {
         return restaurantOwnerMapper.toDTO(user);
     }
 
-    //update restaurant owner
-    public RestaurantOwnerDTO updateRestaurantOwner(UpdateRestaurantOwnerRequest request) {
-        Long userId = SecurityUtil.getCurrentUserId(RestaurantOwner.class);
-
-        RestaurantOwner currentRestaurantOwner = restaurantOwnerRepository.findById(userId).orElseThrow(
-                () -> new EntityNotFoundException("Restaurant Owner not found"));
-
-        userValidationService.validateUser(request.getPhone(), currentRestaurantOwner.getPhone(), request.getEmail(), currentRestaurantOwner.getEmail(), currentRestaurantOwner.getRole());
-        RestaurantOwner restaurantOwner = restaurantOwnerRepository.save(restaurantOwnerMapper.updateRequestToEntity(request, currentRestaurantOwner));
-
-        return restaurantOwnerMapper.toDTO(restaurantOwner);
-    }
-
-    // update password
-    public RestaurantOwnerDTO updatePassword(UpdatePasswordRequest request) {
-        Long currentUserId = SecurityUtil.getCurrentUserId(RestaurantOwner.class);
-        RestaurantOwner user = restaurantOwnerRepository.findById(currentUserId).orElseThrow(
-                () -> new EntityNotFoundException("Restaurant Owner not found"));
-
-        userValidationService.validatePassword(request.getPassword());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-        RestaurantOwner restaurantOwner = restaurantOwnerRepository.save(user);
-
-        return restaurantOwnerMapper.toDTO(restaurantOwner);
-    }
 
     // create restaurant
     public RestaurantDTO createRestaurant(RestaurantDTO request) {

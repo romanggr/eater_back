@@ -1,8 +1,9 @@
 package com.eater.eater.controller;
 
+import com.eater.eater.dto.auth.LoginResponse;
 import com.eater.eater.dto.auth.UpdatePasswordRequest;
 import com.eater.eater.dto.restaurantOwner.*;
-import com.eater.eater.model.restaurantOwner.Restaurant;
+import com.eater.eater.service.auth.AuthService;
 import com.eater.eater.service.restaurantOwner.RestaurantOwnerService;
 import com.eater.eater.service.restaurantOwner.RestaurantService;
 import org.springframework.http.ResponseEntity;
@@ -13,10 +14,12 @@ import org.springframework.web.bind.annotation.*;
 public class RestaurantOwnerController {
 private final RestaurantOwnerService restaurantOwnerService;
 private final RestaurantService restaurantService;
+    private final AuthService authService;
 
-    public RestaurantOwnerController(RestaurantOwnerService restaurantOwnerService, RestaurantService restaurantService) {
+    public RestaurantOwnerController(RestaurantOwnerService restaurantOwnerService, RestaurantService restaurantService, AuthService authService) {
         this.restaurantOwnerService = restaurantOwnerService;
         this.restaurantService = restaurantService;
+        this.authService = authService;
     }
 
     @GetMapping("/getRestaurantOwner")
@@ -33,14 +36,14 @@ private final RestaurantService restaurantService;
     }
 
     @PutMapping("/updateRestaurantOwner")
-    public ResponseEntity<RestaurantOwnerDTO> updateRestaurantOwner(@RequestBody UpdateRestaurantOwnerRequest request) {
-        RestaurantOwnerDTO response = restaurantOwnerService.updateRestaurantOwner(request);
+    public ResponseEntity<LoginResponse> updateRestaurantOwner(@RequestBody UpdateRestaurantOwnerRequest request) {
+        LoginResponse response = authService.updateRestaurantOwner(request);
         return ResponseEntity.ok(response);
     }
 
     @PutMapping("/updatePassword")
-    public ResponseEntity<RestaurantOwnerDTO> updatePassword(@RequestBody UpdatePasswordRequest request) {
-        RestaurantOwnerDTO response = restaurantOwnerService.updatePassword(request);
+    public ResponseEntity<LoginResponse> updatePassword(@RequestBody UpdatePasswordRequest request) {
+        LoginResponse response = authService.updateRestaurantOwnerPassword(request);
         return ResponseEntity.ok(response);
     }
 

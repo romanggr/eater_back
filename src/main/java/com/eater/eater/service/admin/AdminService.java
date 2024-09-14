@@ -2,6 +2,7 @@ package com.eater.eater.service.admin;
 
 import com.eater.eater.dto.admin.*;
 import com.eater.eater.dto.auth.BanRequest;
+import com.eater.eater.dto.auth.LoginResponse;
 import com.eater.eater.dto.auth.UpdatePasswordRequest;
 import com.eater.eater.dto.client.ClientDTO;
 import com.eater.eater.dto.courier.CourierDTO;
@@ -26,6 +27,10 @@ import com.eater.eater.utils.mapper.client.ClientMapper;
 import com.eater.eater.utils.mapper.courier.CourierMapper;
 import com.eater.eater.utils.mapper.restaurantOwner.RestaurantOwnerMapper;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -43,11 +48,9 @@ public class AdminService {
     private final CourierMapper courierMapper;
     private final ClientMapper clientMapper;
     private final RestaurantOwnerMapper restaurantOwnerMapper;
-    private final UserValidationService userValidationService;
-    private final PasswordEncoder passwordEncoder;
     private final AdminSecurity adminSecurity;
 
-    public AdminService(CourierRepository courierRepository, ClientRepository clientRepository, AdminRepository adminRepository, RestaurantOwnerRepository restaurantOwnerRepository, AdminMapper adminMapper, CourierMapper courierMapper, ClientMapper clientMapper, RestaurantOwnerMapper restaurantOwnerMapper, UserValidationService userValidationService, PasswordEncoder passwordEncoder, AdminSecurity adminSecurity) {
+    public AdminService(CourierRepository courierRepository, ClientRepository clientRepository, AdminRepository adminRepository, RestaurantOwnerRepository restaurantOwnerRepository, AdminMapper adminMapper, CourierMapper courierMapper, ClientMapper clientMapper, RestaurantOwnerMapper restaurantOwnerMapper, UserValidationService userValidationService, PasswordEncoder passwordEncoder, AdminSecurity adminSecurity, AuthenticationManager authenticationManager) {
         this.courierRepository = courierRepository;
         this.clientRepository = clientRepository;
         this.adminRepository = adminRepository;
@@ -56,8 +59,6 @@ public class AdminService {
         this.courierMapper = courierMapper;
         this.clientMapper = clientMapper;
         this.restaurantOwnerMapper = restaurantOwnerMapper;
-        this.userValidationService = userValidationService;
-        this.passwordEncoder = passwordEncoder;
         this.adminSecurity = adminSecurity;
     }
 
@@ -72,28 +73,6 @@ public class AdminService {
         return adminMapper.toDTO(admin);
     }
 
-    public AdminDTO updateAdmin(UpdateAdminRequest request) {
-        Long currentUserId = SecurityUtil.getCurrentUserId(Admin.class);
-        Admin currentAdmin = adminRepository.findById(currentUserId).orElseThrow(
-                () -> new EntityNotFoundException("Admin not found"));
-
-        userValidationService.validateUser(request.getPhone(), currentAdmin.getPhone(), request.getEmail(), currentAdmin.getEmail(), currentAdmin.getRole());
-        Admin admin = adminRepository.save(adminMapper.updateRequestToEntity(request, currentAdmin));
-
-        return adminMapper.toDTO(admin);
-    }
-
-    public AdminDTO updatePassword(UpdatePasswordRequest request) {
-        Long currentUserId = SecurityUtil.getCurrentUserId(Admin.class);
-        Admin currentAdmin = adminRepository.findById(currentUserId).orElseThrow(
-                () -> new EntityNotFoundException("Admin not found"));
-
-        userValidationService.validatePassword(request.getPassword());
-        currentAdmin.setPassword(passwordEncoder.encode(request.getPassword()));
-        Admin admin = adminRepository.save(currentAdmin);
-
-        return adminMapper.toDTO(admin);
-    }
 
 
     public List<CouriersForAdminDTO> getCouriers() {

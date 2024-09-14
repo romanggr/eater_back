@@ -5,9 +5,6 @@ import com.eater.eater.enums.CourierStatus;
 import com.eater.eater.enums.RestaurantOwnerStatus;
 import com.eater.eater.exception.BannedStatusException;
 import com.eater.eater.exception.StatusException;
-import com.eater.eater.exception.UnconfirmedAdminException;
-import com.eater.eater.model.admin.Admin;
-import com.eater.eater.repository.admin.AdminRepository;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
