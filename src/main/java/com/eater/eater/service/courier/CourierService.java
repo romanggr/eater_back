@@ -1,19 +1,15 @@
 package com.eater.eater.service.courier;
 
-import com.eater.eater.dto.auth.UpdatePasswordRequest;
 import com.eater.eater.dto.courier.*;
 import com.eater.eater.enums.CourierStatus;
-import com.eater.eater.exception.StatusException;
 import com.eater.eater.model.courier.Courier;
 import com.eater.eater.model.courier.CourierCoordinates;
 import com.eater.eater.repository.courier.CourierCoordinatesRepository;
 import com.eater.eater.repository.courier.CourierRepository;
 import com.eater.eater.security.SecurityUtil;
-import com.eater.eater.service.auth.UserValidationService;
 import com.eater.eater.utils.mapper.courier.CourierMapper;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 
@@ -21,17 +17,10 @@ import org.springframework.stereotype.Service;
 public class CourierService {
     private final CourierRepository courierRepository;
     private final CourierCoordinatesRepository courierCoordinatesRepository;
-    private final CourierMapper courierMapper;
-    private final UserValidationService userValidationService;
-    private final PasswordEncoder passwordEncoder;
-
     @Autowired
-    public CourierService(CourierRepository courierRepository, CourierCoordinatesRepository courierCoordinatesRepository, CourierMapper courierMapper, UserValidationService userValidationService, PasswordEncoder passwordEncoder) {
+    public CourierService(CourierRepository courierRepository, CourierCoordinatesRepository courierCoordinatesRepository) {
         this.courierRepository = courierRepository;
         this.courierCoordinatesRepository = courierCoordinatesRepository;
-        this.courierMapper = courierMapper;
-        this.userValidationService = userValidationService;
-        this.passwordEncoder = passwordEncoder;
     }
 
 
@@ -43,7 +32,7 @@ public class CourierService {
 
         SecurityUtil.validateUserIsBanned(courier.getCourierStatus());
 
-        return courierMapper.toDTO(courier);
+        return CourierMapper.toDTO(courier);
     }
 
     // Update coordinates
@@ -57,8 +46,8 @@ public class CourierService {
             throw new EntityNotFoundException("Coordinates not found for the current courier");
         }
 
-        courierCoordinatesRepository.save(courierMapper.coordinatesToEntity(coordinates, courierCoordinatesDTO));
-        return courierMapper.toDTO(currentCourier);
+        courierCoordinatesRepository.save(CourierMapper.coordinatesToEntity(coordinates, courierCoordinatesDTO));
+        return CourierMapper.toDTO(currentCourier);
     }
 
     // update isActive
@@ -73,7 +62,7 @@ public class CourierService {
         currentCourier.setCourierStatus(isActiveDTO.getIsActive() ? CourierStatus.AVAILABLE : CourierStatus.OFF_DUTY);
         courierRepository.save(currentCourier);
 
-        return courierMapper.toDTO(currentCourier);
+        return CourierMapper.toDTO(currentCourier);
     }
 
 }

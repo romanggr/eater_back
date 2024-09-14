@@ -1,35 +1,27 @@
 package com.eater.eater.service.restaurantOwner;
 
-import com.eater.eater.dto.auth.UpdatePasswordRequest;
 import com.eater.eater.dto.restaurantOwner.RestaurantDTO;
 import com.eater.eater.dto.restaurantOwner.RestaurantOwnerDTO;
-import com.eater.eater.dto.restaurantOwner.UpdateRestaurantOwnerRequest;
 import com.eater.eater.exception.RestaurantAlreadyCreatedException;
 import com.eater.eater.model.restaurantOwner.Restaurant;
 import com.eater.eater.model.restaurantOwner.RestaurantOwner;
 import com.eater.eater.repository.restaurantOwner.RestaurantOwnerRepository;
 import com.eater.eater.repository.restaurantOwner.RestaurantRepository;
 import com.eater.eater.security.SecurityUtil;
-import com.eater.eater.service.auth.UserValidationService;
 import com.eater.eater.utils.mapper.restaurantOwner.RestaurantMapper;
 import com.eater.eater.utils.mapper.restaurantOwner.RestaurantOwnerMapper;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class RestaurantOwnerService {
     private final RestaurantOwnerRepository restaurantOwnerRepository;
     private final RestaurantRepository restaurantRepository;
-    private final RestaurantMapper restaurantMapper;
-    private final RestaurantOwnerMapper restaurantOwnerMapper;
 
 
-    public RestaurantOwnerService(RestaurantOwnerRepository restaurantOwnerRepository, RestaurantRepository restaurantRepository, RestaurantOwnerMapper restaurantOwnerMapper, RestaurantMapper restaurantMapper, UserValidationService userValidationService, PasswordEncoder passwordEncoder) {
+    public RestaurantOwnerService(RestaurantOwnerRepository restaurantOwnerRepository, RestaurantRepository restaurantRepository) {
         this.restaurantOwnerRepository = restaurantOwnerRepository;
         this.restaurantRepository = restaurantRepository;
-        this.restaurantMapper = restaurantMapper;
-        this.restaurantOwnerMapper = restaurantOwnerMapper;
     }
 
     //get restaurant owner
@@ -40,7 +32,7 @@ public class RestaurantOwnerService {
 
         SecurityUtil.validateUserIsBanned(user.getRestaurantOwnerStatus());
 
-        return restaurantOwnerMapper.toDTO(user);
+        return RestaurantOwnerMapper.toDTO(user);
     }
 
 
@@ -53,9 +45,9 @@ public class RestaurantOwnerService {
         RestaurantOwner restaurantOwner = restaurantOwnerRepository.findById(currentUser.getId()).orElseThrow(
                 () -> new EntityNotFoundException("Restaurant Owner not found"));
 
-        Restaurant restaurant = restaurantRepository.save(restaurantMapper.toEntity(request, restaurantOwner));
+        Restaurant restaurant = restaurantRepository.save(RestaurantMapper.toEntity(request, restaurantOwner));
         System.out.println(restaurant.getAvatarUrl());
-        return restaurantMapper.toDTO(restaurant);
+        return RestaurantMapper.toDTO(restaurant);
     }
 
 

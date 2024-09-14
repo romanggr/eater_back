@@ -1,21 +1,22 @@
 package com.eater.eater.utils.mapper.restaurantOwner;
 
 import com.eater.eater.dto.admin.RestaurantOwnersForAdminDTO;
+import com.eater.eater.dto.auth.RestaurantOwnerRegistrationRequest;
 import com.eater.eater.dto.restaurantOwner.RestaurantDTO;
 import com.eater.eater.dto.restaurantOwner.RestaurantOwnerDTO;
 import com.eater.eater.dto.restaurantOwner.UpdateRestaurantOwnerRequest;
 import com.eater.eater.dto.restaurantOwner.UpdateRestaurantRequest;
 import com.eater.eater.model.restaurantOwner.Restaurant;
 import com.eater.eater.model.restaurantOwner.RestaurantOwner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Component
 public class RestaurantOwnerMapper {
-    public RestaurantOwnerDTO toDTO(RestaurantOwner restaurantOwner) {
+    public static RestaurantOwnerDTO toDTO(RestaurantOwner restaurantOwner) {
         RestaurantOwnerDTO ownerDTO = new RestaurantOwnerDTO();
         ownerDTO.setId(restaurantOwner.getId());
         ownerDTO.setEmail(restaurantOwner.getEmail());
@@ -27,7 +28,7 @@ public class RestaurantOwnerMapper {
     }
 
 
-    public List<RestaurantOwnersForAdminDTO> allRestaurantOwnerToDTO(List<RestaurantOwner> restaurantOwners) {
+    public static List<RestaurantOwnersForAdminDTO> allRestaurantOwnerToDTO(List<RestaurantOwner> restaurantOwners) {
         if (restaurantOwners == null || restaurantOwners.isEmpty()) {
             return new ArrayList<>();
         }
@@ -45,5 +46,27 @@ public class RestaurantOwnerMapper {
                     return dto;
                 })
                 .collect(Collectors.toList());
+    }
+
+    public static RestaurantOwner authToEntity(RestaurantOwnerRegistrationRequest input, PasswordEncoder passwordEncoder) {
+        RestaurantOwner user = new RestaurantOwner();
+        user.setName(input.getName());
+        user.setEmail(input.getEmail());
+        user.setPhone(input.getPhone());
+        user.setPassword(passwordEncoder.encode(input.getPassword()));
+        user.setRestaurant(input.getRestaurant());
+        user.setOrders(input.getOrders());
+
+        return user;
+    }
+
+    public static RestaurantOwner updateRequestToEntity(UpdateRestaurantOwnerRequest request, RestaurantOwner restaurantOwner) {
+        if (request == null || restaurantOwner == null) return null;
+
+        restaurantOwner.setName(request.getName());
+        restaurantOwner.setPhone(request.getPhone());
+        restaurantOwner.setEmail(request.getEmail());
+
+        return restaurantOwner;
     }
 }

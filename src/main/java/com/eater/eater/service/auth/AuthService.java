@@ -1,6 +1,5 @@
 package com.eater.eater.service.auth;
 
-import com.eater.eater.dto.admin.AdminDTO;
 import com.eater.eater.dto.admin.UpdateAdminRequest;
 import com.eater.eater.dto.auth.*;
 import com.eater.eater.dto.client.UpdateClientRequest;
@@ -17,10 +16,10 @@ import com.eater.eater.repository.courier.CourierRepository;
 import com.eater.eater.repository.restaurantOwner.RestaurantOwnerRepository;
 import com.eater.eater.security.JwtService;
 import com.eater.eater.security.SecurityUtil;
-import com.eater.eater.utils.mapper.auth.AdminRegistrationMapper;
-import com.eater.eater.utils.mapper.auth.ClientRegistrationMapper;
-import com.eater.eater.utils.mapper.auth.CourierRegistrationMapper;
-import com.eater.eater.utils.mapper.auth.RestaurantOwnerRegistrationMapper;
+import com.eater.eater.utils.mapper.admin.AdminMapper;
+import com.eater.eater.utils.mapper.client.ClientMapper;
+import com.eater.eater.utils.mapper.courier.CourierMapper;
+import com.eater.eater.utils.mapper.restaurantOwner.RestaurantOwnerMapper;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -59,7 +58,7 @@ public class AuthService {
         //validation
         userValidationService.validateUser(input.getPhone(), null, input.getEmail(), null, input.getPassword(), Role.COURIER);
 
-        Courier user = CourierRegistrationMapper.toEntity(input, passwordEncoder);
+        Courier user = CourierMapper.authToEntity(input, passwordEncoder);
         courierRepository.save(user);
 
         Authentication authentication = authenticationManager.authenticate(
@@ -80,7 +79,7 @@ public class AuthService {
         //validation
         userValidationService.validateUser(input.getPhone(), null, input.getEmail(), null, input.getPassword(), Role.ADMIN);
 
-        Admin user = AdminRegistrationMapper.toEntity(input, passwordEncoder);
+        Admin user = AdminMapper.authToEntity(input, passwordEncoder);
         adminRepository.save(user);
 
         Authentication authentication = authenticationManager.authenticate(
@@ -101,7 +100,7 @@ public class AuthService {
         //validation
         userValidationService.validateUser(input.getPhone(), null, input.getEmail(), null, input.getPassword(), Role.CLIENT);
 
-        Client user = ClientRegistrationMapper.toEntity(input, passwordEncoder);
+        Client user = ClientMapper.toEntity(input, passwordEncoder);
         clientRepository.save(user);
 
         Authentication authentication = authenticationManager.authenticate(
@@ -122,7 +121,7 @@ public class AuthService {
     public LoginResponse restaurantOwnerSignup(RestaurantOwnerRegistrationRequest input) {
         //validation
         userValidationService.validateUser(input.getPhone(), null, input.getEmail(), null, input.getPassword(), Role.RESTAURANT_OWNER);
-        RestaurantOwner user = RestaurantOwnerRegistrationMapper.toEntity(input, passwordEncoder);
+        RestaurantOwner user = RestaurantOwnerMapper.authToEntity(input, passwordEncoder);
         restaurantOwnerRepository.save(user);
 
         Authentication authentication = authenticationManager.authenticate(
@@ -214,7 +213,7 @@ public class AuthService {
             throw new IllegalArgumentException("This password is incorrect");
         }
 
-        Admin updatedUser = AdminRegistrationMapper.updateRequestToEntity(request, currentUser);
+        Admin updatedUser = AdminMapper.updateRequestToEntity(request, currentUser);
         adminRepository.save(updatedUser);
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -241,7 +240,7 @@ public class AuthService {
             throw new IllegalArgumentException("This password is incorrect");
         }
 
-        Courier updatedUser = CourierRegistrationMapper.updateRequestToEntity(request, currentUser);
+        Courier updatedUser = CourierMapper.updateRequestToEntity(request, currentUser);
         courierRepository.save(updatedUser);
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -268,7 +267,7 @@ public class AuthService {
             throw new IllegalArgumentException("This password is incorrect");
         }
 
-        Client updatedUser = ClientRegistrationMapper.updateRequestToEntity(request, currentUser);
+        Client updatedUser = ClientMapper.updateRequestToEntity(request, currentUser);
         clientRepository.save(updatedUser);
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -295,7 +294,7 @@ public class AuthService {
             throw new IllegalArgumentException("This password is incorrect");
         }
 
-        RestaurantOwner updatedUser = RestaurantOwnerRegistrationMapper.updateRequestToEntity(request, currentUser);
+        RestaurantOwner updatedUser = RestaurantOwnerMapper.updateRequestToEntity(request, currentUser);
         restaurantOwnerRepository.save(updatedUser);
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(

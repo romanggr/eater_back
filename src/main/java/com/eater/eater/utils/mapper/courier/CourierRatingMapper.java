@@ -7,9 +7,8 @@ import com.eater.eater.model.courier.CourierRating;
 import com.eater.eater.service.client.ClientService;
 import org.springframework.stereotype.Component;
 
-@Component
 public class CourierRatingMapper {
-    public CourierRatingDTO toDTO(CourierRating courierRating){
+    public static CourierRatingDTO toDTO(CourierRating courierRating){
         if(courierRating == null) return null;
 
         CourierRatingDTO courierRatingDTO = new CourierRatingDTO();
@@ -20,7 +19,7 @@ public class CourierRatingMapper {
         return courierRatingDTO;
     }
 
-    public CourierRating toEntity(CourierRatingDTO courierRatingDTO, Courier courier, Client client) {
+    public static CourierRating toEntity(CourierRatingDTO courierRatingDTO, Courier courier, Client client) {
         if (courierRatingDTO == null) return null;
 
         CourierRating courierRating = new CourierRating();

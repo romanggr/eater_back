@@ -6,10 +6,10 @@ import com.eater.eater.model.restaurantOwner.Restaurant;
 import com.eater.eater.model.restaurantOwner.RestaurantOwner;
 import org.springframework.stereotype.Component;
 
-@Component
+
 public class RestaurantMapper {
 
-    public RestaurantDTO toDTO(Restaurant restaurant) {
+    public static RestaurantDTO toDTO(Restaurant restaurant) {
         if (restaurant == null) return null;
 
         RestaurantDTO restaurantDTO = new RestaurantDTO();
@@ -26,7 +26,7 @@ public class RestaurantMapper {
 
         return restaurantDTO;
     }
-    public Restaurant toEntity(RestaurantDTO restaurantDTO, RestaurantOwner restaurantOwner) {
+    public static Restaurant toEntity(RestaurantDTO restaurantDTO, RestaurantOwner restaurantOwner) {
         if (restaurantDTO == null) return null;
 
         Restaurant restaurant = new Restaurant();
@@ -43,7 +43,7 @@ public class RestaurantMapper {
         return restaurant;
     }
 
-    public Restaurant updateRequestToEntity(UpdateRestaurantRequest request, Restaurant restaurant) {
+    public static Restaurant updateRequestToEntity(UpdateRestaurantRequest request, Restaurant restaurant) {
         if (request == null || restaurant == null) return null;
 
         restaurant.setAddress(request.getAddress());

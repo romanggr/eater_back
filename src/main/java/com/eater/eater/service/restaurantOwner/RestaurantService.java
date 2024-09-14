@@ -16,17 +16,13 @@ import org.springframework.stereotype.Service;
 @Service
 public class RestaurantService {
     private final RestaurantRepository restaurantRepository;
-    private final RestaurantMapper restaurantMapper;
     private final RestaurantDishRepository restaurantDishRepository;
-    private final RestaurantDishMapper restaurantDishMapper;
 
-    public RestaurantService(RestaurantRepository restaurantRepository, RestaurantMapper restaurantMapper, RestaurantDishRepository restaurantDishRepository, RestaurantDishMapper restaurantDishMapper) {
+
+    public RestaurantService(RestaurantRepository restaurantRepository, RestaurantDishRepository restaurantDishRepository) {
         this.restaurantRepository = restaurantRepository;
-        this.restaurantMapper = restaurantMapper;
         this.restaurantDishRepository = restaurantDishRepository;
-        this.restaurantDishMapper = restaurantDishMapper;
     }
-
 
 
     //update restaurant
@@ -37,9 +33,9 @@ public class RestaurantService {
         Restaurant currentRestaurant = restaurantRepository.findById(restaurantId).orElseThrow(
                 () -> new EntityNotFoundException("Restaurant not found"));
 
-        Restaurant restaurant = restaurantRepository.save(restaurantMapper.updateRequestToEntity(request, currentRestaurant));
+        Restaurant restaurant = restaurantRepository.save(RestaurantMapper.updateRequestToEntity(request, currentRestaurant));
 
-        return restaurantMapper.toDTO(restaurant);
+        return RestaurantMapper.toDTO(restaurant);
     }
 
     //create dish
@@ -47,9 +43,9 @@ public class RestaurantService {
         RestaurantOwner currentUser = SecurityUtil.getCurrentUser(RestaurantOwner.class);
         Restaurant restaurant = restaurantRepository.findById(currentUser.getId()).orElseThrow(
                 () -> new EntityNotFoundException("Restaurant not found"));
-        RestaurantDish dish = restaurantDishRepository.save(restaurantDishMapper.toEntity(request, restaurant));
+        RestaurantDish dish = restaurantDishRepository.save(RestaurantDishMapper.toEntity(request, restaurant));
 
-        return restaurantDishMapper.toDTO(dish);
+        return RestaurantDishMapper.toDTO(dish);
     }
 
     //delete dish
@@ -71,8 +67,8 @@ public class RestaurantService {
         RestaurantDish restaurantDish = restaurantDishRepository.findById(request.getId()).orElseThrow(
                 () -> new EntityNotFoundException("Dish not found"));
 
-        RestaurantDish updatedDish = restaurantDishRepository.save(restaurantDishMapper.toEntityUpdateRequest(request, restaurant, restaurantDish));
+        RestaurantDish updatedDish = restaurantDishRepository.save(RestaurantDishMapper.toEntityUpdateRequest(request, restaurant, restaurantDish));
 
-        return restaurantDishMapper.toDTO(updatedDish);
+        return RestaurantDishMapper.toDTO(updatedDish);
     }
 }

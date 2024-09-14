@@ -1,50 +1,34 @@
 package com.eater.eater.service.client;
 
 import com.eater.eater.dto.client.ClientDTO;
-import com.eater.eater.dto.client.UpdateClientRequest;
 import com.eater.eater.dto.courier.CourierCoordinatesDTO;
 import com.eater.eater.dto.courier.CourierRatingDTO;
-import com.eater.eater.dto.auth.UpdatePasswordRequest;
-import com.eater.eater.enums.ClientStatus;
 import com.eater.eater.model.client.Client;
 import com.eater.eater.model.courier.Courier;
 import com.eater.eater.model.courier.CourierCoordinates;
 import com.eater.eater.model.courier.CourierRating;
 import com.eater.eater.repository.client.ClientRepository;
-import com.eater.eater.repository.courier.CourierCoordinatesRepository;
 import com.eater.eater.repository.courier.CourierRatingRepository;
 import com.eater.eater.repository.courier.CourierRepository;
 import com.eater.eater.security.SecurityUtil;
-import com.eater.eater.service.auth.UserValidationService;
 import com.eater.eater.utils.mapper.client.ClientMapper;
 import com.eater.eater.utils.mapper.courier.CourierMapper;
 import com.eater.eater.utils.mapper.courier.CourierRatingMapper;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ClientService {
-    private final ClientMapper clientMapper;
-    private final CourierRatingMapper courierRatingMapper;
     private final ClientRepository clientRepository;
     private final CourierRepository courierRepository;
     private final CourierRatingRepository courierRatingRepository;
-    private final UserValidationService userValidationService;
-    private final CourierMapper courierMapper;
-    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public ClientService(ClientMapper clientMapper, CourierRatingMapper courierRatingMapper, ClientRepository clientRepository, CourierRepository courierRepository, CourierCoordinatesRepository courierCoordinatesRepository, CourierRatingRepository courierRatingRepository, UserValidationService userValidationService, CourierMapper courierMapper, PasswordEncoder passwordEncoder) {
-        this.clientMapper = clientMapper;
-        this.courierRatingMapper = courierRatingMapper;
+    public ClientService(ClientRepository clientRepository, CourierRepository courierRepository,CourierRatingRepository courierRatingRepository) {
         this.clientRepository = clientRepository;
         this.courierRepository = courierRepository;
         this.courierRatingRepository = courierRatingRepository;
-        this.userValidationService = userValidationService;
-        this.courierMapper = courierMapper;
-        this.passwordEncoder = passwordEncoder;
     }
 
 
@@ -56,7 +40,7 @@ public class ClientService {
 
         SecurityUtil.validateUserIsBanned(currentClient.getClientStatus());
 
-        return clientMapper.toDTO(currentClient);
+        return ClientMapper.toDTO(currentClient);
     }
 
     // Get courier coordinates
@@ -65,7 +49,7 @@ public class ClientService {
                 () -> new EntityNotFoundException("Courier with id: " + courierId + " not found"));
         CourierCoordinates coordinates = courier.getCoordinates();
 
-        return courierMapper.coordinatesToDTO(coordinates);
+        return CourierMapper.coordinatesToDTO(coordinates);
     }
 
     // Give courier rating
@@ -80,10 +64,10 @@ public class ClientService {
         Client client = clientRepository.findById(courierRatingDTO.getClientId())
                 .orElseThrow(() -> new EntityNotFoundException("Client with id: " + courierRatingDTO.getClientId() + " not found"));
 
-        CourierRating courierRating = courierRatingMapper.toEntity(courierRatingDTO, courier, client);
+        CourierRating courierRating = CourierRatingMapper.toEntity(courierRatingDTO, courier, client);
         courierRatingRepository.save(courierRating);
 
-        return courierRatingMapper.toDTO(courierRating);
+        return CourierRatingMapper.toDTO(courierRating);
     }
 
 
