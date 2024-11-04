@@ -1,6 +1,6 @@
 package com.eater.eater.controller;
 
-import com.eater.eater.dto.auth.LoginResponse;
+import com.eater.eater.dto.auth.AuthResponse;
 import com.eater.eater.dto.auth.UpdatePasswordRequest;
 import com.eater.eater.dto.courier.*;
 import com.eater.eater.service.auth.AuthService;
@@ -31,15 +31,15 @@ public class CourierController {
 
     // Update user data
     @PutMapping("/updateCourier")
-    public ResponseEntity<LoginResponse> updateCourier(@RequestBody UpdateCourierRequest courierDTO){
-        LoginResponse response = authService.updateCourier(courierDTO);
+    public ResponseEntity<AuthResponse> updateCourier(@RequestBody UpdateCourierRequest courierDTO){
+        AuthResponse response = authService.updateCourier(courierDTO);
         return ResponseEntity.ok(response);
     }
 
     // Update password
     @PutMapping("/updatePassword")
-    public ResponseEntity<LoginResponse> updatePassword(@RequestBody UpdatePasswordRequest request) {
-        LoginResponse response = authService.updateCourierPassword(request);
+    public ResponseEntity<AuthResponse> updatePassword(@RequestBody UpdatePasswordRequest request) {
+        AuthResponse response = authService.updateCourierPassword(request);
         return ResponseEntity.ok(response);
     }
 

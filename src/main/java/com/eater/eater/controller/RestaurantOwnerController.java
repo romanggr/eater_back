@@ -1,6 +1,6 @@
 package com.eater.eater.controller;
 
-import com.eater.eater.dto.auth.LoginResponse;
+import com.eater.eater.dto.auth.AuthResponse;
 import com.eater.eater.dto.auth.UpdatePasswordRequest;
 import com.eater.eater.dto.restaurantOwner.*;
 import com.eater.eater.service.auth.AuthService;
@@ -36,14 +36,14 @@ private final RestaurantService restaurantService;
     }
 
     @PutMapping("/updateRestaurantOwner")
-    public ResponseEntity<LoginResponse> updateRestaurantOwner(@RequestBody UpdateRestaurantOwnerRequest request) {
-        LoginResponse response = authService.updateRestaurantOwner(request);
+    public ResponseEntity<AuthResponse> updateRestaurantOwner(@RequestBody UpdateRestaurantOwnerRequest request) {
+        AuthResponse response = authService.updateRestaurantOwner(request);
         return ResponseEntity.ok(response);
     }
 
     @PutMapping("/updatePassword")
-    public ResponseEntity<LoginResponse> updatePassword(@RequestBody UpdatePasswordRequest request) {
-        LoginResponse response = authService.updateRestaurantOwnerPassword(request);
+    public ResponseEntity<AuthResponse> updatePassword(@RequestBody UpdatePasswordRequest request) {
+        AuthResponse response = authService.updateRestaurantOwnerPassword(request);
         return ResponseEntity.ok(response);
     }
 

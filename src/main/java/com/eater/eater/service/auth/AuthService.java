@@ -1,9 +1,13 @@
 package com.eater.eater.service.auth;
 
+import com.eater.eater.dto.admin.AdminDTO;
 import com.eater.eater.dto.admin.UpdateAdminRequest;
 import com.eater.eater.dto.auth.*;
+import com.eater.eater.dto.client.ClientDTO;
 import com.eater.eater.dto.client.UpdateClientRequest;
+import com.eater.eater.dto.courier.CourierDTO;
 import com.eater.eater.dto.courier.UpdateCourierRequest;
+import com.eater.eater.dto.restaurantOwner.RestaurantOwnerDTO;
 import com.eater.eater.dto.restaurantOwner.UpdateRestaurantOwnerRequest;
 import com.eater.eater.enums.Role;
 import com.eater.eater.model.admin.Admin;
@@ -52,9 +56,8 @@ public class AuthService {
         this.userValidationService = userValidationService;
     }
 
-
     //registration
-    public LoginResponse courierSignup(CourierRegistrationRequest input) {
+    public AuthResponse<CourierDTO> courierSignup(CourierRegistrationRequest input) {
         //validation
         userValidationService.validateUser(input.getPhone(), null, input.getEmail(), null, input.getPassword(), Role.COURIER);
 
@@ -69,13 +72,13 @@ public class AuthService {
         );
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwtToken = jwtService.generateToken(user);
-        LoginResponse loginResponse = new LoginResponse();
-        loginResponse.setToken(jwtToken);
+        AuthResponse<CourierDTO> authResponse = new AuthResponse<CourierDTO>();
+        authResponse.setToken(jwtToken);
 
-        return loginResponse;
+        return authResponse;
     }
 
-    public LoginResponse adminSignup(AdminRegistrationRequest input) {
+    public AuthResponse<AdminDTO> adminSignup(AdminRegistrationRequest input) {
         //validation
         userValidationService.validateUser(input.getPhone(), null, input.getEmail(), null, input.getPassword(), Role.ADMIN);
 
@@ -90,13 +93,13 @@ public class AuthService {
         );
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwtToken = jwtService.generateToken(user);
-        LoginResponse loginResponse = new LoginResponse();
-        loginResponse.setToken(jwtToken);
+        AuthResponse<AdminDTO> authResponse = new AuthResponse<AdminDTO>();
+        authResponse.setToken(jwtToken);
 
-        return loginResponse;
+        return authResponse;
     }
 
-    public LoginResponse clientSignup(ClientRegistrationRequest input) {
+    public AuthResponse<ClientDTO> clientSignup(ClientRegistrationRequest input) {
         //validation
         userValidationService.validateUser(input.getPhone(), null, input.getEmail(), null, input.getPassword(), Role.CLIENT);
 
@@ -112,13 +115,13 @@ public class AuthService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         String jwtToken = jwtService.generateToken(user);
-        LoginResponse loginResponse = new LoginResponse();
-        loginResponse.setToken(jwtToken);
+        AuthResponse<ClientDTO> authResponse = new AuthResponse<ClientDTO>();
+        authResponse.setToken(jwtToken);
 
-        return loginResponse;
+        return authResponse;
     }
 
-    public LoginResponse restaurantOwnerSignup(RestaurantOwnerRegistrationRequest input) {
+    public AuthResponse<RestaurantOwnerDTO> restaurantOwnerSignup(RestaurantOwnerRegistrationRequest input) {
         //validation
         userValidationService.validateUser(input.getPhone(), null, input.getEmail(), null, input.getPassword(), Role.RESTAURANT_OWNER);
         RestaurantOwner user = RestaurantOwnerMapper.authToEntity(input, passwordEncoder);
@@ -134,14 +137,14 @@ public class AuthService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         String jwtToken = jwtService.generateToken(user);
-        LoginResponse loginResponse = new LoginResponse();
-        loginResponse.setToken(jwtToken);
+        AuthResponse<RestaurantOwnerDTO> authResponse = new AuthResponse<RestaurantOwnerDTO>();
+        authResponse.setToken(jwtToken);
 
-        return loginResponse;
+        return authResponse;
     }
 
     //login
-    public LoginResponse courierAuthenticate(LoginRequest input) {
+    public AuthResponse<CourierDTO> courierAuthenticate(LoginRequest input) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         input.getEmail(),
@@ -151,12 +154,12 @@ public class AuthService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         Courier courier = courierRepository.findByEmail(input.getEmail()).orElseThrow();
         String jwtToken = jwtService.generateToken(courier);
-        LoginResponse loginResponse = new LoginResponse();
-        loginResponse.setToken(jwtToken);
-        return loginResponse;
+        AuthResponse<CourierDTO> authResponse = new AuthResponse<CourierDTO>();
+        authResponse.setToken(jwtToken);
+        return authResponse;
     }
 
-    public LoginResponse clientAuthenticate(LoginRequest input) {
+    public AuthResponse<ClientDTO> clientAuthenticate(LoginRequest input) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         input.getEmail(),
@@ -166,12 +169,12 @@ public class AuthService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         Client client = clientRepository.findByEmail(input.getEmail()).orElseThrow();
         String jwtToken = jwtService.generateToken(client);
-        LoginResponse loginResponse = new LoginResponse();
-        loginResponse.setToken(jwtToken);
-        return loginResponse;
+        AuthResponse<ClientDTO> authResponse = new AuthResponse<ClientDTO>();
+        authResponse.setToken(jwtToken);
+        return authResponse;
     }
 
-    public LoginResponse restaurantOwnerAuthenticate(LoginRequest input) {
+    public AuthResponse<RestaurantOwnerDTO> restaurantOwnerAuthenticate(LoginRequest input) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         input.getEmail(),
@@ -181,12 +184,12 @@ public class AuthService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         RestaurantOwner restaurantOwner = restaurantOwnerRepository.findByEmail(input.getEmail()).orElseThrow();
         String jwtToken = jwtService.generateToken(restaurantOwner);
-        LoginResponse loginResponse = new LoginResponse();
-        loginResponse.setToken(jwtToken);
-        return loginResponse;
+        AuthResponse<RestaurantOwnerDTO> authResponse = new AuthResponse<RestaurantOwnerDTO>();
+        authResponse.setToken(jwtToken);
+        return authResponse;
     }
 
-    public LoginResponse adminAuthenticate(LoginRequest input) {
+    public AuthResponse<AdminDTO> adminAuthenticate(LoginRequest input) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         input.getEmail(),
@@ -196,14 +199,14 @@ public class AuthService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         Admin admin = adminRepository.findByEmail(input.getEmail()).orElseThrow();
         String jwtToken = jwtService.generateToken(admin);
-        LoginResponse loginResponse = new LoginResponse();
-        loginResponse.setToken(jwtToken);
-        return loginResponse;
+        AuthResponse<AdminDTO> authResponse = new AuthResponse<AdminDTO>();
+        authResponse.setToken(jwtToken);
+        return authResponse;
     }
 
 
     // update user
-    public LoginResponse updateAdmin(UpdateAdminRequest request) {
+    public AuthResponse<AdminDTO> updateAdmin(UpdateAdminRequest request) {
         Long currentUserId = SecurityUtil.getCurrentUserId(Admin.class);
         Admin currentUser = adminRepository.findById(currentUserId)
                 .orElseThrow(() -> new EntityNotFoundException("Admin not found"));
@@ -225,12 +228,12 @@ public class AuthService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwtToken = jwtService.generateToken(updatedUser);
 
-        LoginResponse response = new LoginResponse();
+        AuthResponse<AdminDTO> response = new AuthResponse<AdminDTO>();
         response.setToken(jwtToken);
         return response;
     }
 
-    public LoginResponse updateCourier(UpdateCourierRequest request) {
+    public AuthResponse<CourierDTO> updateCourier(UpdateCourierRequest request) {
         Long currentUserId = SecurityUtil.getCurrentUserId(Courier.class);
         Courier currentUser = courierRepository.findById(currentUserId)
                 .orElseThrow(() -> new EntityNotFoundException("Courier not found"));
@@ -252,12 +255,12 @@ public class AuthService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwtToken = jwtService.generateToken(updatedUser);
 
-        LoginResponse response = new LoginResponse();
+        AuthResponse<CourierDTO> response = new AuthResponse<CourierDTO>();
         response.setToken(jwtToken);
         return response;
     }
 
-    public LoginResponse updateClient(UpdateClientRequest request) {
+    public AuthResponse<ClientDTO> updateClient(UpdateClientRequest request) {
         Long currentUserId = SecurityUtil.getCurrentUserId(Client.class);
         Client currentUser = clientRepository.findById(currentUserId)
                 .orElseThrow(() -> new EntityNotFoundException("Client not found"));
@@ -279,12 +282,12 @@ public class AuthService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwtToken = jwtService.generateToken(updatedUser);
 
-        LoginResponse response = new LoginResponse();
+        AuthResponse<ClientDTO> response = new AuthResponse<ClientDTO>();
         response.setToken(jwtToken);
         return response;
     }
 
-    public LoginResponse updateRestaurantOwner(UpdateRestaurantOwnerRequest request) {
+    public AuthResponse<RestaurantOwnerDTO> updateRestaurantOwner(UpdateRestaurantOwnerRequest request) {
         Long currentUserId = SecurityUtil.getCurrentUserId(RestaurantOwner.class);
         RestaurantOwner currentUser = restaurantOwnerRepository.findById(currentUserId)
                 .orElseThrow(() -> new EntityNotFoundException("Restaurant owner not found"));
@@ -306,14 +309,14 @@ public class AuthService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwtToken = jwtService.generateToken(updatedUser);
 
-        LoginResponse response = new LoginResponse();
+        AuthResponse<RestaurantOwnerDTO> response = new AuthResponse<RestaurantOwnerDTO>();
         response.setToken(jwtToken);
         return response;
     }
 
 
     // update user password
-    public LoginResponse updateAdminPassword(UpdatePasswordRequest request) {
+    public AuthResponse<AdminDTO> updateAdminPassword(UpdatePasswordRequest request) {
         Long currentUserId = SecurityUtil.getCurrentUserId(Admin.class);
         Admin currentUser = adminRepository.findById(currentUserId)
                 .orElseThrow(() -> new EntityNotFoundException("Admin not found"));
@@ -334,12 +337,12 @@ public class AuthService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwtToken = jwtService.generateToken(updatedAdmin);
 
-        LoginResponse response = new LoginResponse();
+        AuthResponse<AdminDTO> response = new AuthResponse<AdminDTO>();
         response.setToken(jwtToken);
         return response;
     }
 
-    public LoginResponse updateCourierPassword(UpdatePasswordRequest request) {
+    public AuthResponse<CourierDTO> updateCourierPassword(UpdatePasswordRequest request) {
         Long currentUserId = SecurityUtil.getCurrentUserId(Courier.class);
         Courier currentUser = courierRepository.findById(currentUserId)
                 .orElseThrow(() -> new EntityNotFoundException("Admin not found"));
@@ -360,12 +363,12 @@ public class AuthService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwtToken = jwtService.generateToken(updatedUser);
 
-        LoginResponse response = new LoginResponse();
+        AuthResponse<CourierDTO> response = new AuthResponse<CourierDTO>();
         response.setToken(jwtToken);
         return response;
     }
 
-    public LoginResponse updateClientPassword(UpdatePasswordRequest request) {
+    public AuthResponse<ClientDTO> updateClientPassword(UpdatePasswordRequest request) {
         Long currentUserId = SecurityUtil.getCurrentUserId(Courier.class);
         Client currentUser = clientRepository.findById(currentUserId)
                 .orElseThrow(() -> new EntityNotFoundException("Admin not found"));
@@ -386,12 +389,12 @@ public class AuthService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwtToken = jwtService.generateToken(updatedUser);
 
-        LoginResponse response = new LoginResponse();
+        AuthResponse<ClientDTO> response = new AuthResponse<ClientDTO>();
         response.setToken(jwtToken);
         return response;
     }
 
-    public LoginResponse updateRestaurantOwnerPassword(UpdatePasswordRequest request) {
+    public AuthResponse<RestaurantOwnerDTO> updateRestaurantOwnerPassword(UpdatePasswordRequest request) {
         Long currentUserId = SecurityUtil.getCurrentUserId(Courier.class);
         RestaurantOwner currentUser = restaurantOwnerRepository.findById(currentUserId)
                 .orElseThrow(() -> new EntityNotFoundException("Admin not found"));
@@ -412,7 +415,7 @@ public class AuthService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwtToken = jwtService.generateToken(updatedUser);
 
-        LoginResponse response = new LoginResponse();
+        AuthResponse<RestaurantOwnerDTO> response = new AuthResponse<RestaurantOwnerDTO>();
         response.setToken(jwtToken);
         return response;
     }

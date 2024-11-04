@@ -2,7 +2,7 @@ package com.eater.eater.controller;
 
 import com.eater.eater.dto.admin.*;
 import com.eater.eater.dto.auth.BanRequest;
-import com.eater.eater.dto.auth.LoginResponse;
+import com.eater.eater.dto.auth.AuthResponse;
 import com.eater.eater.dto.auth.UpdatePasswordRequest;
 import com.eater.eater.dto.client.ClientDTO;
 import com.eater.eater.dto.courier.CourierDTO;
@@ -34,15 +34,15 @@ public class AdminController {
 
     // update admin
     @PutMapping("/updateAdmin")
-    public ResponseEntity<LoginResponse> updateAdmin(@RequestBody UpdateAdminRequest request) {
-        LoginResponse response = authService.updateAdmin(request);
+    public ResponseEntity<AuthResponse> updateAdmin(@RequestBody UpdateAdminRequest request) {
+        AuthResponse response = authService.updateAdmin(request);
         return ResponseEntity.ok(response);
     }
 
     // update password
     @PutMapping("/updatePassword")
-    public ResponseEntity<LoginResponse> updatePassword(@RequestBody UpdatePasswordRequest request) {
-        LoginResponse response = authService.updateAdminPassword(request);
+    public ResponseEntity<AuthResponse> updatePassword(@RequestBody UpdatePasswordRequest request) {
+        AuthResponse response = authService.updateAdminPassword(request);
         return ResponseEntity.ok(response);
     }
 
