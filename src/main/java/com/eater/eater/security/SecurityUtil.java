@@ -11,6 +11,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 public class SecurityUtil {
     public static <T> T getCurrentUser(Class<T> clazz) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new IllegalStateException("No authenticated user found");
+        }
         return clazz.cast(authentication.getPrincipal());
     }
 
@@ -52,4 +55,6 @@ public class SecurityUtil {
             throw new BannedStatusException("Your account was banned, please check your email");
         }
     }
+
+
 }

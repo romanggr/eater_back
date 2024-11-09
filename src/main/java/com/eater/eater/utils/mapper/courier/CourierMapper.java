@@ -101,6 +101,8 @@ public class CourierMapper {
         courier.setOrders((List<Orders>) input.getOrders());
         courier.setTransportType(input.getTransportType());
 
+
+
         CourierCoordinates coordinates = input.getCourierCoordinates();
         if (coordinates != null) {
             coordinates.setCourier(courier);

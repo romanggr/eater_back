@@ -1,10 +1,7 @@
 package com.eater.eater.controller;
 
-import com.eater.eater.dto.auth.AuthResponse;
-import com.eater.eater.dto.auth.UpdatePasswordRequest;
 import com.eater.eater.dto.courier.*;
-import com.eater.eater.service.auth.AuthService;
-import com.eater.eater.service.courier.CourierService;
+import com.eater.eater.service.courier.CourierServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,48 +9,30 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/courier")
 public class CourierController {
-    private final CourierService courierService;
-    private final AuthService authService;
+    private final CourierServiceImpl courierServiceImpl;
 
     @Autowired
-    public CourierController(CourierService courierService, AuthService authService) {
-        this.courierService = courierService;
-        this.authService = authService;
+    public CourierController(CourierServiceImpl courierServiceImpl) {
+        this.courierServiceImpl = courierServiceImpl;
     }
 
-    // Get courier data
     @GetMapping("/getCourier")
     public ResponseEntity<CourierDTO> getCourier() {
-        CourierDTO response = courierService.getCourier();
+        CourierDTO response = courierServiceImpl.getCourier();
 
         return ResponseEntity.ok(response);
     }
 
-    // Update user data
-    @PutMapping("/updateCourier")
-    public ResponseEntity<AuthResponse> updateCourier(@RequestBody UpdateCourierRequest courierDTO){
-        AuthResponse response = authService.updateCourier(courierDTO);
-        return ResponseEntity.ok(response);
-    }
-
-    // Update password
-    @PutMapping("/updatePassword")
-    public ResponseEntity<AuthResponse> updatePassword(@RequestBody UpdatePasswordRequest request) {
-        AuthResponse response = authService.updateCourierPassword(request);
-        return ResponseEntity.ok(response);
-    }
-
-    // Update coordinates
     @PutMapping("/updateCoordinates")
     public ResponseEntity<CourierDTO> updateCoordinates(@RequestBody CourierCoordinatesDTO courierCoordinatesDTO) {
-        CourierDTO response = courierService.updateCourierCoordinates(courierCoordinatesDTO);
+        CourierDTO response = courierServiceImpl.updateCourierCoordinates(courierCoordinatesDTO);
         return ResponseEntity.ok(response);
     }
 
-    // Set courier is ready now
+
     @PutMapping("/setActive")
-    public ResponseEntity<CourierDTO> updateCoordinates(@RequestBody CourierIsActiveDTO courierIsActiveDTO) {
-        CourierDTO response = courierService.updateIsActive(courierIsActiveDTO);
+    public ResponseEntity<CourierDTO> setActive(@RequestBody CourierIsActiveDTO courierIsActiveDTO) {
+        CourierDTO response = courierServiceImpl.updateIsActive(courierIsActiveDTO);
         return ResponseEntity.ok(response);
     }
 

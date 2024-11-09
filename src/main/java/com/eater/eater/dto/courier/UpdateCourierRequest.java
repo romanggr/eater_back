@@ -10,5 +10,5 @@ public class UpdateCourierRequest {
     private String phone;
     private String avatarUrl;
     private TransportType transportType;
-    private String oldPassword;
+    private String password;
 }

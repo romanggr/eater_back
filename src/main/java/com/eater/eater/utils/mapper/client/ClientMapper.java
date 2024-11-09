@@ -35,7 +35,7 @@ public class ClientMapper {
         return clientDTO;
     }
 
-    public static Client toEntity(ClientRegistrationRequest input, PasswordEncoder passwordEncoder) {
+    public static Client authToEntity(ClientRegistrationRequest input, PasswordEncoder passwordEncoder) {
         Client client = new Client();
         client.setName(input.getName());
         client.setAddress(input.getAddress());

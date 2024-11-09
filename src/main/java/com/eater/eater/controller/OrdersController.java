@@ -1,17 +1,17 @@
 package com.eater.eater.controller;
 
-import com.eater.eater.service.orders.OrdersService;
+import com.eater.eater.service.orders.OrdersServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1")
 public class OrdersController {
-    private final OrdersService ordersService;
+    private final OrdersServiceImpl ordersServiceImpl;
 
     @Autowired
-    public OrdersController(OrdersService ordersService) {
-        this.ordersService = ordersService;
+    public OrdersController(OrdersServiceImpl ordersServiceImpl) {
+        this.ordersServiceImpl = ordersServiceImpl;
     }
 
     // Get All

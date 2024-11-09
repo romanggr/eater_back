@@ -4,58 +4,26 @@ import com.eater.eater.enums.ClientStatus;
 import com.eater.eater.enums.Role;
 import com.eater.eater.model.orders.Orders;
 import com.eater.eater.model.courier.CourierRating;
+import com.eater.eater.model.user.User;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
 import java.util.List;
 
+@EqualsAndHashCode(callSuper = true)
 @Entity
-@AllArgsConstructor
-@NoArgsConstructor
-@Getter
-@Setter
-@Table(name = "client")
-public class Client implements UserDetails {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(nullable = false)
-    private String name;
-
-    @Column(nullable = false)
+@Data
+@DiscriminatorValue("CLIENT")
+public class Client extends User implements UserDetails {
     private String address;
-
-    @Column(nullable = false)
     private Double latitude;
-
-    @Column(nullable = false)
     private Double longitude;
-
-    @Column(unique = true, nullable = false)
-    private String email;
-
-    @Column(unique = true, nullable = false)
-    private String phone;
-
-    @Column(nullable = false)
     private String avatarUrl;
 
-    @Column(nullable = false)
-    private String password;
-
-    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private ClientStatus clientStatus = ClientStatus.ACTIVE;
-
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private Role role = Role.CLIENT;
 
     @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnoreProperties("client")
@@ -66,34 +34,17 @@ public class Client implements UserDetails {
     private List<CourierRating> rating;
 
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        // I did it without role entity, I try to do it maximum easy
-        return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
+    public Client(Long id, String email, String phone, String name, String password, String address, Double latitude, Double longitude, String avatarUrl, List<Orders> orders, List<CourierRating> rating) {
+        super(id, email, phone, name, password, Role.CLIENT);
+        this.address = address;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.avatarUrl = avatarUrl;
+        this.orders = orders;
+        this.rating = rating;
     }
 
-    @Override
-    public String getUsername() {
-        return email;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
+    public Client() {
+        super.setRole(Role.CLIENT);
     }
 }

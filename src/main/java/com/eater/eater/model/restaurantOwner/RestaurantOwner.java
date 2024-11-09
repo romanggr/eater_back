@@ -1,53 +1,28 @@
 package com.eater.eater.model.restaurantOwner;
 
-        import com.eater.eater.enums.RestaurantOwnerStatus;
-        import com.eater.eater.enums.Role;
-        import com.eater.eater.model.orders.Orders;
-        import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-        import com.fasterxml.jackson.annotation.JsonManagedReference;
-        import jakarta.persistence.*;
-        import lombok.AllArgsConstructor;
-        import lombok.Data;
-        import lombok.NoArgsConstructor;
-        import org.springframework.security.core.GrantedAuthority;
-        import org.springframework.security.core.authority.SimpleGrantedAuthority;
-        import org.springframework.security.core.userdetails.UserDetails;
+import com.eater.eater.enums.RestaurantOwnerStatus;
+import com.eater.eater.enums.Role;
+import com.eater.eater.model.orders.Orders;
+import com.eater.eater.model.user.User;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.persistence.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
 
-        import java.util.Collection;
-        import java.util.List;
+import java.util.List;
 
+@EqualsAndHashCode(callSuper = true)
 @Entity
-@Table(name = "restaurant_owner")
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class RestaurantOwner implements UserDetails {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(nullable = false,unique = true)
-    private String email;
-
-    @Column(nullable = false,unique = true)
-    private String phone;
-
-    @Column(nullable = false)
-    private String name;
-
-    @Column(nullable = false)
-    private String password;
-
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private Role role = Role.RESTAURANT_OWNER;
-
-    @Column(nullable = false)
+@DiscriminatorValue("RESTAURANT_OWNER")
+public class RestaurantOwner extends User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private RestaurantOwnerStatus restaurantOwnerStatus = RestaurantOwnerStatus.ACTIVE;
 
-
-    @OneToOne(mappedBy = "restaurantOwner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "restaurantOwner", cascade = CascadeType.ALL)
     @JsonManagedReference
     private Restaurant restaurant;
 
@@ -55,35 +30,13 @@ public class RestaurantOwner implements UserDetails {
     @JsonIgnoreProperties("restaurantOwner")
     private List<Orders> orders;
 
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        // I did it without role entity, I try to do it maximum easy
-        return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
-    }
-    @Override
-    public String getUsername() {
-        return email;
+    public RestaurantOwner(Long id, String email, String phone, String name, String password, Restaurant restaurant, List<Orders> orders) {
+        super(id, email, phone, name, password, Role.RESTAURANT_OWNER);
+        this.restaurant = restaurant;
+        this.orders = orders;
     }
 
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
+    public RestaurantOwner(){
+        super.setRole(Role.RESTAURANT_OWNER);
     }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
-
 }

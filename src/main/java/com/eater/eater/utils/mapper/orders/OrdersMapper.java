@@ -41,7 +41,7 @@ public class OrdersMapper {
 //        return ordersDTO;
 //    }
 //
-//    public static Orders toEntity(OrdersDTO ordersDTO, Courier courier, Client client) {
+//    public static Orders authToEntity(OrdersDTO ordersDTO, Courier courier, Client client) {
 //        if (ordersDTO == null) {
 //            return null;
 //        }

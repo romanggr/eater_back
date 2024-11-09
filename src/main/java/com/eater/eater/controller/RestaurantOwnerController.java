@@ -1,73 +1,68 @@
 package com.eater.eater.controller;
 
-import com.eater.eater.dto.auth.AuthResponse;
-import com.eater.eater.dto.auth.UpdatePasswordRequest;
 import com.eater.eater.dto.restaurantOwner.*;
-import com.eater.eater.service.auth.AuthService;
-import com.eater.eater.service.restaurantOwner.RestaurantOwnerService;
-import com.eater.eater.service.restaurantOwner.RestaurantService;
+import com.eater.eater.service.restaurantOwner.RestaurantOwnerServiceImpl;
+import com.eater.eater.service.restaurantOwner.RestaurantServiceImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/restaurantOwner")
 public class RestaurantOwnerController {
-private final RestaurantOwnerService restaurantOwnerService;
-private final RestaurantService restaurantService;
-    private final AuthService authService;
+private final RestaurantOwnerServiceImpl restaurantOwnerServiceImpl;
+private final RestaurantServiceImpl restaurantServiceImpl;
 
-    public RestaurantOwnerController(RestaurantOwnerService restaurantOwnerService, RestaurantService restaurantService, AuthService authService) {
-        this.restaurantOwnerService = restaurantOwnerService;
-        this.restaurantService = restaurantService;
-        this.authService = authService;
+
+    public RestaurantOwnerController(RestaurantOwnerServiceImpl restaurantOwnerServiceImpl, RestaurantServiceImpl restaurantServiceImpl) {
+        this.restaurantOwnerServiceImpl = restaurantOwnerServiceImpl;
+        this.restaurantServiceImpl = restaurantServiceImpl;
+
     }
 
     @GetMapping("/getRestaurantOwner")
         public ResponseEntity<RestaurantOwnerDTO> getRestaurantOwner(){
-        RestaurantOwnerDTO response = restaurantOwnerService.getRestaurantOwner();
+        RestaurantOwnerDTO response = restaurantOwnerServiceImpl.getRestaurantOwner();
 
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("/createRestaurant")
     public ResponseEntity<RestaurantDTO> createRestaurant(@RequestBody RestaurantDTO request){
-        RestaurantDTO response = restaurantOwnerService.createRestaurant(request);
+        RestaurantDTO response = restaurantOwnerServiceImpl.createRestaurant(request);
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping("/updateRestaurantOwner")
-    public ResponseEntity<AuthResponse> updateRestaurantOwner(@RequestBody UpdateRestaurantOwnerRequest request) {
-        AuthResponse response = authService.updateRestaurantOwner(request);
-        return ResponseEntity.ok(response);
-    }
-
-    @PutMapping("/updatePassword")
-    public ResponseEntity<AuthResponse> updatePassword(@RequestBody UpdatePasswordRequest request) {
-        AuthResponse response = authService.updateRestaurantOwnerPassword(request);
-        return ResponseEntity.ok(response);
-    }
 
     @PutMapping("/updateRestaurant")
     public ResponseEntity<RestaurantDTO> updateRestaurant(@RequestBody UpdateRestaurantRequest request) {
-        RestaurantDTO response = restaurantService.updateRestaurant(request);
+        RestaurantDTO response = restaurantServiceImpl.updateRestaurant(request);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/dishes")
+    public ResponseEntity<List<RestaurantDishDTO>> getDishes(){
+        List<RestaurantDishDTO> response = restaurantServiceImpl.getDishes();
+
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("/createDish")
     public ResponseEntity<RestaurantDishDTO> createDish(@RequestBody RestaurantDishRequest request){
-        RestaurantDishDTO response = restaurantService.createDish(request);
+        RestaurantDishDTO response = restaurantServiceImpl.createDish(request);
         return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/deleteDish/{id}")
     public ResponseEntity<Long> deleteDish(@PathVariable Long id){
-        Long response = restaurantService.deleteDish(id);
+        Long response = restaurantServiceImpl.deleteDish(id);
         return ResponseEntity.ok(response);
     }
 
     @PutMapping("/updateDish")
     public ResponseEntity<RestaurantDishDTO> createDish(@RequestBody RestaurantDishUpdateRequest request){
-        RestaurantDishDTO response = restaurantService.updateDish(request);
+        RestaurantDishDTO response = restaurantServiceImpl.updateDish(request);
         return ResponseEntity.ok(response);
     }
 }
