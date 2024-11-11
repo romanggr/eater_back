@@ -19,3 +19,10 @@ auth:
   app:
     secret: 188d53804216495002bf84398070a17e690a30802cc1fe7b30edc639c71e64c0
     lifeTime: 3600000
+
+aws:
+  s3:
+    bucket-name: eater-bucket
+    region: us-west-2
+    access-key: YOUR_ACCESS_KEY
+    secret-key: YOUR_SECRET_KEY

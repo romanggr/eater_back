@@ -49,15 +49,11 @@ public class RestaurantServiceImpl implements RestaurantService {
 
 
     public long deleteDish(Long id) {
-        System.out.println(1);
         if (!restaurantDishRepository.existsById(id)) {
             throw new EntityNotFoundException("Dish with ID " + id + " does not exist.");
         }
-        System.out.println(2);
 
         restaurantDishRepository.deleteById(id);
-        System.out.println(3);
-
         return id;
     }
 

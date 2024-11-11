@@ -81,8 +81,8 @@ public class UserValidationService {
         }
     }
 
-    public void isEqualPassword(String password, String encryptedPassword, PasswordEncoder passwordEncoder) {
-        if (!passwordEncoder.matches(password, encryptedPassword)) {
+    public void isEqualPassword(String currentPassword, String encryptedCurrentPassword, PasswordEncoder passwordEncoder) {
+        if (!passwordEncoder.matches(currentPassword, encryptedCurrentPassword)) {
             throw new IllegalArgumentException("Passwords do not match");
         }
     }
@@ -93,15 +93,15 @@ public class UserValidationService {
         validatePassword(password);
     }
 
-    public void updateValidation(String phone, String email, String oldEmail, Role role, String password, String encryptedPassword, PasswordEncoder passwordEncoder) {
+    public void updateValidation(String phone, String email, String oldEmail, Role role, String currentPassword, String encryptedCurrentPassword, PasswordEncoder passwordEncoder) {
         validatePhone(phone);
         validateUniqueEmail(email, oldEmail, role);
-        updatePasswordValidation(password, encryptedPassword, passwordEncoder);
+        isEqualPassword(currentPassword, encryptedCurrentPassword, passwordEncoder);
     }
 
-    public void updatePasswordValidation(String password, String encryptedPassword, PasswordEncoder passwordEncoder) {
-        validatePassword(password);
-        isEqualPassword(password, encryptedPassword, passwordEncoder);
+    public void updatePasswordValidation(String newPassword, String currentPassword, String encryptedCurrentPassword, PasswordEncoder passwordEncoder) {
+        validatePassword(newPassword);
+        isEqualPassword(currentPassword, encryptedCurrentPassword, passwordEncoder);
     }
 
 

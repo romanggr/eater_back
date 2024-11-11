@@ -1,7 +1,9 @@
 package com.eater.eater.exception;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -11,11 +13,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<?> handleIllegalArgumentException(IllegalArgumentException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(BannedStatusException.class)
-    public ResponseEntity<?> handleBannedStatusException(BannedStatusException ex) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(StatusException.class)
@@ -38,9 +35,19 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.FORBIDDEN);
     }
 
-    @ExceptionHandler(InvalidPasswordException.class)
-    public ResponseEntity<String> handleInvalidPasswordException(InvalidPasswordException ex) {
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public ResponseEntity<String> handleUsernameNotFoundException(UsernameNotFoundException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<String> handleIllegalStateException(IllegalStateException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<String> handleEntityNotFoundException(EntityNotFoundException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
 }

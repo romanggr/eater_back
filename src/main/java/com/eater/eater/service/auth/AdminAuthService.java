@@ -30,19 +30,15 @@ public class AdminAuthService {
     }
 
     public AuthResponse<AdminDTO> signUp(AdminRegistrationRequest input) {
-        System.out.println(1);
         // validation
         userValidationService.signUpValidation(input.getPhone(), input.getEmail(), null, input.getPassword(), Role.ADMIN);
-        System.out.println(1);
 
         // save in db
         Admin user = AdminMapper.authToEntity(input, passwordEncoder);
         adminRepository.save(user);
-        System.out.println(1);
 
         // add in context
         authUtilityService.addContext(input.getEmail(), input.getPassword());
-        System.out.println(1);
 
         // create and return response
         AdminDTO userDTO = AdminMapper.toDTO(user);
@@ -68,15 +64,14 @@ public class AdminAuthService {
                 .orElseThrow(() -> new EntityNotFoundException("Admin not found"));
 
         // data validation
-        userValidationService.updateValidation(request.getPhone(), request.getEmail(), currentUser.getEmail(), Role.ADMIN, request.getPassword(), currentUser.getPassword(), passwordEncoder);
-
+        userValidationService.updateValidation(request.getPhone(), request.getEmail(), currentUser.getEmail(), Role.ADMIN, request.getCurrentPassword(), currentUser.getPassword(), passwordEncoder);
 
         // update in db
         Admin userEntity = AdminMapper.updateRequestToEntity(request, currentUser);
         Admin updatedUser = adminRepository.save(userEntity);
 
         // add in context
-        authUtilityService.addContext(updatedUser.getEmail(), request.getPassword());
+        authUtilityService.addContext(updatedUser.getEmail(), request.getCurrentPassword());
 
         // create and return response
         AdminDTO userDTO = AdminMapper.toDTO(updatedUser);
@@ -90,13 +85,13 @@ public class AdminAuthService {
                 .orElseThrow(() -> new EntityNotFoundException("Admin not found"));
 
         // data validation
-        userValidationService.updatePasswordValidation(request.getOldPassword(), currentUser.getPassword(), passwordEncoder);
+        userValidationService.updatePasswordValidation(request.getNewPassword(), request.getCurrentPassword(), currentUser.getPassword(), passwordEncoder);
 
         // add in context
-        authUtilityService.addContext(currentUser.getEmail(), request.getOldPassword());
+        authUtilityService.addContext(currentUser.getEmail(), request.getCurrentPassword());
 
         // update in db
-        currentUser.setPassword(passwordEncoder.encode(request.getPassword()));
+        currentUser.setPassword(passwordEncoder.encode(request.getNewPassword()));
         Admin updatedUser = adminRepository.save(currentUser);
 
         // create and return response

@@ -85,13 +85,13 @@ public class ClientAuthService {
                 .orElseThrow(() -> new EntityNotFoundException("Client not found"));
 
         // data validation
-        userValidationService.updatePasswordValidation(request.getOldPassword(), currentUser.getPassword(), passwordEncoder);
+        userValidationService.updatePasswordValidation(request.getNewPassword(), request.getCurrentPassword(), currentUser.getPassword(), passwordEncoder);
 
         // add in context
-        authUtilityService.addContext(currentUser.getEmail(), request.getOldPassword());
+        authUtilityService.addContext(currentUser.getEmail(), request.getCurrentPassword());
 
         // update in db
-        currentUser.setPassword(passwordEncoder.encode(request.getPassword()));
+        currentUser.setPassword(passwordEncoder.encode(request.getNewPassword()));
         Client updatedUser = clientRepository.save(currentUser);
 
         // create and return response

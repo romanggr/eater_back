@@ -43,7 +43,6 @@ public class AdminServiceImpl implements AdminService {
         this.clientRepository = clientRepository;
         this.adminRepository = adminRepository;
         this.restaurantOwnerRepository = restaurantOwnerRepository;
-
         this.adminSecurity = adminSecurity;
     }
 
@@ -51,10 +50,9 @@ public class AdminServiceImpl implements AdminService {
     public AdminDTO getAdmin() {
         Long currentUserID = SecurityUtil.getCurrentUserId(Admin.class);
         Admin admin = adminRepository.findById(currentUserID).orElseThrow(
-                () -> new IllegalArgumentException("Admin not found"));
+                () -> new EntityNotFoundException("Admin not found"));
 
         adminSecurity.validateAdminIsConfirmed();
-
         return AdminMapper.toDTO(admin);
     }
 
@@ -77,49 +75,32 @@ public class AdminServiceImpl implements AdminService {
         return RestaurantOwnerMapper.allRestaurantOwnerToDTO(restaurantOwners);
     }
 
-    public List<CouriersForAdminDTO> getCouriersByPhone(String phone) {
-        adminSecurity.validateAdminIsConfirmed();
-        List<Courier> couriers = courierRepository.findAllByPhone(phone);
-        return CourierMapper.allCourierToDTO(couriers);
-    }
-
-    public List<ClientsForAdminDTO> getClientsByPhone(String phone) {
-        adminSecurity.validateAdminIsConfirmed();
-        List<Client> clients = clientRepository.findAllByPhone(phone);
-        return ClientMapper.allClientToDTO(clients);
-    }
-
-    public List<RestaurantOwnersForAdminDTO> getRestaurantOwnerByPhone(String phone) {
-        adminSecurity.validateAdminIsConfirmed();
-        List<RestaurantOwner> restaurantOwners = restaurantOwnerRepository.findAllByPhone(phone);
-        return RestaurantOwnerMapper.allRestaurantOwnerToDTO(restaurantOwners);
-    }
 
     public CourierDTO getCourierById(Long id) {
         adminSecurity.validateAdminIsConfirmed();
         Courier courier = courierRepository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException("Cannot find user with id " + id));
+                () -> new IllegalArgumentException("Cannot find user with id " + id));
         return CourierMapper.toDTO(courier);
     }
 
     public ClientDTO getClientById(Long id) {
         adminSecurity.validateAdminIsConfirmed();
         Client client = clientRepository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException("Cannot find user with id " + id));
+                () -> new IllegalArgumentException("Cannot find user with id " + id));
         return ClientMapper.toDTO(client);
     }
 
     public RestaurantOwnerDTO getRestaurantOwnerById(Long id) {
         adminSecurity.validateAdminIsConfirmed();
         RestaurantOwner restaurantOwner = restaurantOwnerRepository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException("Cannot find user with id " + id));
+                () -> new IllegalArgumentException("Cannot find user with id " + id));
         return RestaurantOwnerMapper.toDTO(restaurantOwner);
     }
 
     public CourierDTO confirmCourier(Long id) {
         adminSecurity.validateAdminIsConfirmed();
         Courier courier = courierRepository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException("Cannot find user with id " + id));
+                () -> new IllegalArgumentException("Cannot find user with id " + id));
         courier.setCourierStatus(CourierStatus.OFF_DUTY);
         Courier updatedCourier = courierRepository.save(courier);
 
@@ -129,7 +110,7 @@ public class AdminServiceImpl implements AdminService {
     public AdminDTO confirmAdmin(Long id) {
         adminSecurity.validateAdminIsConfirmed();
         Admin admin = adminRepository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException("Cannot find user with id " + id));
+                () -> new IllegalArgumentException("Cannot find user with id " + id));
         admin.setAccepted(true);
         Admin updatedAdmin = adminRepository.save(admin);
         return AdminMapper.toDTO(updatedAdmin);

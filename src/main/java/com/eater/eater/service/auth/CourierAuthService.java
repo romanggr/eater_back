@@ -70,6 +70,7 @@ public class CourierAuthService {
         userValidationService.updateValidation(request.getPhone(), request.getEmail(), currentUser.getEmail(), Role.COURIER, request.getPassword(), currentUser.getPassword(), passwordEncoder);
 
 
+
         // update in db
         Courier userEntity = CourierMapper.updateRequestToEntity(request, currentUser);
         Courier updatedUser = courierRepository.save(userEntity);
@@ -89,13 +90,13 @@ public class CourierAuthService {
                 .orElseThrow(() -> new EntityNotFoundException("Courier not found"));
 
         // data validation
-        userValidationService.updatePasswordValidation(request.getOldPassword(), currentUser.getPassword(), passwordEncoder);
+        userValidationService.updatePasswordValidation(request.getNewPassword(), request.getCurrentPassword(), currentUser.getPassword(), passwordEncoder);
 
         // add in context
-        authUtilityService.addContext(currentUser.getEmail(), request.getOldPassword());
+        authUtilityService.addContext(currentUser.getEmail(), request.getCurrentPassword());
 
         // update in db
-        currentUser.setPassword(passwordEncoder.encode(request.getPassword()));
+        currentUser.setPassword(passwordEncoder.encode(request.getNewPassword()));
         Courier updatedUser = courierRepository.save(currentUser);
 
         // create and return response

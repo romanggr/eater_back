@@ -18,12 +18,6 @@ public interface AdminService {
 
     List<RestaurantOwnersForAdminDTO> getRestaurantOwners();
 
-    List<CouriersForAdminDTO> getCouriersByPhone(String phone);
-
-    List<ClientsForAdminDTO> getClientsByPhone(String phone);
-
-    List<RestaurantOwnersForAdminDTO> getRestaurantOwnerByPhone(String phone);
-
     CourierDTO getCourierById(Long id);
 
     ClientDTO getClientById(Long id);

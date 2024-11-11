@@ -86,14 +86,13 @@ public class RestaurantOwnerAuthService {
                 .orElseThrow(() -> new EntityNotFoundException("Restaurant Owner not found"));
 
         // data validation
-        userValidationService.validatePassword(request.getPassword());
-        userValidationService.isEqualPassword(request.getOldPassword(), currentUser.getPassword(), passwordEncoder);
+        userValidationService.updatePasswordValidation(request.getNewPassword(), request.getCurrentPassword(), currentUser.getPassword(), passwordEncoder);
 
         // add in context
-        authUtilityService.addContext(currentUser.getEmail(), request.getOldPassword());
+        authUtilityService.addContext(currentUser.getEmail(), request.getCurrentPassword());
 
         // update in db
-        currentUser.setPassword(passwordEncoder.encode(request.getPassword()));
+        currentUser.setPassword(passwordEncoder.encode(request.getNewPassword()));
         RestaurantOwner updatedUser = restaurantOwnerRepository.save(currentUser);
 
         // create and return response

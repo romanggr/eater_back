@@ -32,7 +32,6 @@ public class ClientServiceImpl implements ClientService {
     }
 
 
-    //  Get client data
     public ClientDTO getClient() {
         Long currentUserId = SecurityUtil.getCurrentUserId(Client.class);
         Client currentClient = clientRepository.findById(currentUserId).orElseThrow(
@@ -43,7 +42,7 @@ public class ClientServiceImpl implements ClientService {
         return ClientMapper.toDTO(currentClient);
     }
 
-    // Get courier coordinates
+
     public CourierCoordinatesDTO getCourierCoordinates(Long courierId) {
         Courier courier = courierRepository.findById(courierId).orElseThrow(
                 () -> new EntityNotFoundException("Courier with id: " + courierId + " not found"));
@@ -52,7 +51,7 @@ public class ClientServiceImpl implements ClientService {
         return CourierMapper.coordinatesToDTO(coordinates);
     }
 
-    // Give courier rating
+
     public CourierRatingDTO setCourierRating(CourierRatingDTO courierRatingDTO) {
         if (courierRatingDTO.getRating() > 5 || courierRatingDTO.getRating() < 1) {
             throw new IllegalArgumentException("The rating should be from 1 to 5");

@@ -12,11 +12,14 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.concurrent.ExecutionException;
+
 
 @Service
 public class CourierServiceImpl implements CourierService {
     private final CourierRepository courierRepository;
     private final CourierCoordinatesRepository courierCoordinatesRepository;
+
     @Autowired
     public CourierServiceImpl(CourierRepository courierRepository, CourierCoordinatesRepository courierCoordinatesRepository) {
         this.courierRepository = courierRepository;
@@ -24,18 +27,21 @@ public class CourierServiceImpl implements CourierService {
     }
 
 
-    //get courier
     public CourierDTO getCourier() {
-        Long currentUserId = SecurityUtil.getCurrentUserId(Courier.class);
-        Courier courier = courierRepository.findById(currentUserId).orElseThrow(
-                () -> new EntityNotFoundException("Courier not found"));
+//        Long currentUserId = SecurityUtil.getCurrentUserId(Courier.class);
+//        Courier courier = courierRepository.findById(currentUserId).orElseThrow(
+//                () -> new EntityNotFoundException("Courier not found"));
+//
+//        SecurityUtil.validateUserIsBanned(courier.getCourierStatus());
+//
+//        return CourierMapper.toDTO(courier);
 
-        SecurityUtil.validateUserIsBanned(courier.getCourierStatus());
+        throw new IllegalStateException("dfa");
 
-        return CourierMapper.toDTO(courier);
+//        return new CourierDTO();
     }
 
-    // Update coordinates
+
     public CourierDTO updateCourierCoordinates(CourierCoordinatesDTO courierCoordinatesDTO) {
         Courier currentUser = SecurityUtil.getCurrentUser(Courier.class);
         Courier currentCourier = courierRepository.findById(currentUser.getId())
@@ -50,7 +56,7 @@ public class CourierServiceImpl implements CourierService {
         return CourierMapper.toDTO(currentCourier);
     }
 
-    // update isActive
+
     public CourierDTO updateIsActive(CourierIsActiveDTO isActiveDTO) {
         Courier currentUser = SecurityUtil.getCurrentUser(Courier.class);
 
