@@ -7,7 +7,9 @@ import com.eater.eater.model.courier.CourierRating;
 
 public class CourierRatingMapper {
     public static CourierRatingDTO toDTO(CourierRating courierRating){
-        if(courierRating == null) return null;
+        if(courierRating == null) {
+            throw new IllegalArgumentException("Parameter cannot be null or empty.");
+        }
 
         CourierRatingDTO courierRatingDTO = new CourierRatingDTO();
         courierRatingDTO.setRating(courierRating.getRating());
@@ -18,7 +20,9 @@ public class CourierRatingMapper {
     }
 
     public static CourierRating toEntity(CourierRatingDTO courierRatingDTO, Courier courier, Client client) {
-        if (courierRatingDTO == null) return null;
+        if (courierRatingDTO == null) {
+            throw new IllegalArgumentException("Parameter cannot be null or empty.");
+        }
 
         CourierRating courierRating = new CourierRating();
         courierRating.setRating(courierRatingDTO.getRating());

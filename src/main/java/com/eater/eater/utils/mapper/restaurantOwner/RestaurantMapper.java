@@ -9,7 +9,9 @@ import com.eater.eater.model.restaurantOwner.RestaurantOwner;
 public class RestaurantMapper {
 
     public static RestaurantDTO toDTO(Restaurant restaurant) {
-        if (restaurant == null) return null;
+        if (restaurant == null) {
+            throw new IllegalArgumentException("Parameter cannot be null or empty.");
+        }
 
         RestaurantDTO restaurantDTO = new RestaurantDTO();
         restaurantDTO.setId(restaurant.getId());
@@ -26,7 +28,9 @@ public class RestaurantMapper {
         return restaurantDTO;
     }
     public static Restaurant toEntity(RestaurantDTO restaurantDTO, RestaurantOwner restaurantOwner) {
-        if (restaurantDTO == null) return null;
+        if (restaurantDTO == null) {
+            throw new IllegalArgumentException("Parameter cannot be null or empty.");
+        }
 
         Restaurant restaurant = new Restaurant();
         restaurant.setName(restaurantDTO.getName());
@@ -43,7 +47,9 @@ public class RestaurantMapper {
     }
 
     public static Restaurant updateRequestToEntity(UpdateRestaurantRequest request, Restaurant restaurant) {
-        if (request == null || restaurant == null) return null;
+        if (request == null || restaurant == null) {
+            throw new IllegalArgumentException("Parameter cannot be null or empty.");
+        }
 
         restaurant.setAddress(request.getAddress());
         restaurant.setName(request.getName());

@@ -8,10 +8,8 @@ import com.eater.eater.dto.courier.UpdateCourierRequest;
 import com.eater.eater.model.courier.Courier;
 import com.eater.eater.model.courier.CourierCoordinates;
 import com.eater.eater.model.courier.CourierRating;
-import com.eater.eater.model.orders.Orders;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,7 +17,7 @@ public class CourierMapper {
 
     public static CourierDTO toDTO(Courier courier) {
         if (courier == null) {
-            return null;
+            throw new IllegalArgumentException("Parameter cannot be null or empty.");
         }
 
         CourierDTO courierDTO = new CourierDTO();
@@ -42,7 +40,7 @@ public class CourierMapper {
         if (courier.getCoordinates() != null) {
             courierDTO.setLatitude(courier.getCoordinates().getLatitude());
             courierDTO.setLongitude(courier.getCoordinates().getLongitude());
-            courierDTO.setLastUpdate(courier.getCoordinates().getLastUpdate());
+            courierDTO.setCoordinatesLastUpdate(courier.getCoordinates().getLastUpdate());
         }
 
         return courierDTO;
@@ -69,7 +67,7 @@ public class CourierMapper {
 
     public static List<CouriersForAdminDTO> allCourierToDTO(List<Courier> couriers) {
         if (couriers == null || couriers.isEmpty()) {
-            return new ArrayList<>();
+            throw new IllegalArgumentException("Parameter cannot be null or empty.");
         }
 
         return couriers.stream().map(courier -> {
@@ -86,9 +84,9 @@ public class CourierMapper {
         }).collect(Collectors.toList());
     }
 
-    public static Courier authToEntity(CourierRegistrationRequest input, PasswordEncoder passwordEncoder) {
+    public static Courier authToEntity(CourierRegistrationRequest input, PasswordEncoder passwordEncoder, String avatarUrl) {
         if (input == null) {
-            return null;
+            throw new IllegalArgumentException("Parameter cannot be null or empty.");
         }
 
         Courier courier = new Courier();
@@ -96,25 +94,24 @@ public class CourierMapper {
         courier.setEmail(input.getEmail());
         courier.setPhone(input.getPhone());
         courier.setPassword(passwordEncoder.encode(input.getPassword()));
-        courier.setAvatarUrl(input.getAvatarUrl());
-        courier.setRating((List<CourierRating>) input.getCourierRating());
-        courier.setOrders((List<Orders>) input.getOrders());
+        courier.setAvatarUrl(avatarUrl);
         courier.setTransportType(input.getTransportType());
 
 
+        CourierCoordinates coordinates = new CourierCoordinates();
+        coordinates.setCourier(courier);
+        coordinates.setLatitude(input.getCoordinatesLatitude());
+        coordinates.setLongitude(input.getCoordinatesLongitude());
+        coordinates.setLastUpdate(input.getCoordinatesLastUpdate());
 
-        CourierCoordinates coordinates = input.getCourierCoordinates();
-        if (coordinates != null) {
-            coordinates.setCourier(courier);
-            courier.setCoordinates(coordinates);
-        }
+        courier.setCoordinates(coordinates);
 
         return courier;
     }
 
     public static Courier updateRequestToEntity(UpdateCourierRequest updateCourierRequest, Courier courier) {
         if (updateCourierRequest == null) {
-            return null;
+            throw new IllegalArgumentException("Parameter cannot be null or empty.");
         }
 
         courier.setName(updateCourierRequest.getName());

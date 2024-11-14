@@ -8,6 +8,7 @@ import com.eater.eater.repository.courier.CourierRepository;
 import com.eater.eater.repository.restaurantOwner.RestaurantOwnerRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class UserValidationService {
@@ -59,7 +60,7 @@ public class UserValidationService {
             default -> throw new IllegalArgumentException("Unsupported role.");
         };
 
-        if (exists && !oldEmail.equals(email)) {
+        if (exists && !email.equals(oldEmail)) {
             throw new EmailAlreadyInUseException("Email already in use, choose another one");
         }
 
@@ -87,10 +88,17 @@ public class UserValidationService {
         }
     }
 
-    public void signUpValidation(String phone, String email, String oldEmail, String password, Role role) {
+    public void signUpValidation(String phone, String email, String password, Role role) {
         validatePhone(phone);
-        validateUniqueEmail(email, oldEmail, role);
+        validateUniqueEmail(email, null, role);
         validatePassword(password);
+    }
+
+    public void signUpValidation(String phone, String email, String password, Role role, MultipartFile file) {
+        validatePhone(phone);
+        validateUniqueEmail(email, null, role);
+        validatePassword(password);
+        avatarValidation(file);
     }
 
     public void updateValidation(String phone, String email, String oldEmail, Role role, String currentPassword, String encryptedCurrentPassword, PasswordEncoder passwordEncoder) {
@@ -104,5 +112,19 @@ public class UserValidationService {
         isEqualPassword(currentPassword, encryptedCurrentPassword, passwordEncoder);
     }
 
+    public void avatarValidation(MultipartFile file) {
+        if (file == null || file.isEmpty()) {
+            throw new IllegalArgumentException("Avatar cannot be empty.");
+        }
+
+        String fileName = file.getOriginalFilename().toLowerCase();
+        if (!fileName.endsWith(".png") && !fileName.endsWith(".jpg") && !fileName.endsWith(".jpeg") && !fileName.endsWith(".webp")) {
+            throw new IllegalArgumentException("Unsupported image file extension. You can provide .png, .jpg, .jpeg, .webp");
+        }
+
+        if (file.getSize() > 400000) {
+            throw new IllegalArgumentException("Avatar size exceeds 4 kilobytes.");
+        }
+    }
 
 }

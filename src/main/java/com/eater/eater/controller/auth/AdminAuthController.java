@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 public class AdminAuthController {
     private final AdminAuthService adminAuthService;
 
+
     public AdminAuthController(AdminAuthService adminAuthService) {
         this.adminAuthService = adminAuthService;
     }
@@ -44,4 +45,7 @@ public class AdminAuthController {
         return ResponseEntity.ok(response);
     }
 
+
 }
+
+

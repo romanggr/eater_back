@@ -22,5 +22,5 @@ public class CourierDTO {
 
     private Double latitude;
     private Double longitude;
-    private LocalDateTime lastUpdate;
+    private LocalDateTime coordinatesLastUpdate;
 }

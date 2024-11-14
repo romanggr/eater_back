@@ -1,10 +1,7 @@
 package com.eater.eater.dto.auth;
 
-import com.eater.eater.model.courier.CourierRating;
-import com.eater.eater.model.orders.Orders;
 import lombok.Data;
-
-import java.util.List;
+import org.springframework.web.multipart.MultipartFile;
 
 @Data
 public class ClientRegistrationRequest {
@@ -14,8 +11,6 @@ public class ClientRegistrationRequest {
     private Double longitude;
     private String email;
     private String phone;
-    private String avatarUrl;
+    private MultipartFile avatar;
     private String password;
-    private List<Orders> orders;
-    private List<CourierRating> rating;
 }

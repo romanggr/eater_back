@@ -4,7 +4,6 @@ import com.eater.eater.dto.auth.*;
 import com.eater.eater.dto.restaurantOwner.RestaurantOwnerDTO;
 import com.eater.eater.dto.restaurantOwner.UpdateRestaurantOwnerRequest;
 import com.eater.eater.enums.Role;
-import com.eater.eater.model.admin.Admin;
 import com.eater.eater.model.restaurantOwner.RestaurantOwner;
 import com.eater.eater.repository.restaurantOwner.RestaurantOwnerRepository;
 import com.eater.eater.security.SecurityUtil;
@@ -32,7 +31,7 @@ public class RestaurantOwnerAuthService {
 
     public AuthResponse<RestaurantOwnerDTO> signUp(RestaurantOwnerRegistrationRequest input) {
         // validation
-        userValidationService.signUpValidation(input.getPhone(), input.getEmail(), null, input.getPassword(), Role.RESTAURANT_OWNER);
+        userValidationService.signUpValidation(input.getPhone(), input.getEmail(), input.getPassword(), Role.RESTAURANT_OWNER);
 
         // save in db
         RestaurantOwner user = RestaurantOwnerMapper.authToEntity(input, passwordEncoder);

@@ -20,7 +20,7 @@ public class CourierAuthController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<AuthResponse<CourierDTO>> signup(@RequestBody CourierRegistrationRequest courierRegistrationRequest) {
+    public ResponseEntity<AuthResponse<CourierDTO>> signup(@ModelAttribute CourierRegistrationRequest courierRegistrationRequest) {
         AuthResponse<CourierDTO> response = courierAuthService.signUp(courierRegistrationRequest);
 
         return ResponseEntity.ok(response);
@@ -46,5 +46,7 @@ public class CourierAuthController {
 
         return ResponseEntity.ok(response);
     }
+
+
 
 }

@@ -7,7 +7,6 @@ import com.eater.eater.dto.restaurantOwner.UpdateRestaurantOwnerRequest;
 import com.eater.eater.model.restaurantOwner.RestaurantOwner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,7 +25,7 @@ public class RestaurantOwnerMapper {
 
     public static List<RestaurantOwnersForAdminDTO> allRestaurantOwnerToDTO(List<RestaurantOwner> restaurantOwners) {
         if (restaurantOwners == null || restaurantOwners.isEmpty()) {
-            return new ArrayList<>();
+            throw new IllegalArgumentException("Parameter cannot be null or empty.");
         }
 
         return restaurantOwners.stream()
@@ -50,14 +49,14 @@ public class RestaurantOwnerMapper {
         user.setEmail(input.getEmail());
         user.setPhone(input.getPhone());
         user.setPassword(passwordEncoder.encode(input.getPassword()));
-        user.setRestaurant(input.getRestaurant());
-        user.setOrders(input.getOrders());
 
         return user;
     }
 
     public static RestaurantOwner updateRequestToEntity(UpdateRestaurantOwnerRequest request, RestaurantOwner restaurantOwner) {
-        if (request == null || restaurantOwner == null) return null;
+        if (request == null || restaurantOwner == null) {
+            throw new IllegalArgumentException("Parameter cannot be null or empty.");
+        }
 
         restaurantOwner.setName(request.getName());
         restaurantOwner.setPhone(request.getPhone());

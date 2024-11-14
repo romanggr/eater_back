@@ -17,7 +17,7 @@ public class ClientAuthController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<AuthResponse<ClientDTO>> signup(@RequestBody ClientRegistrationRequest courierRegistrationRequest) {
+    public ResponseEntity<AuthResponse<ClientDTO>> signup(@ModelAttribute ClientRegistrationRequest courierRegistrationRequest) {
         AuthResponse<ClientDTO> response = clientAuthService.signUp(courierRegistrationRequest);
 
         return ResponseEntity.ok(response);

@@ -7,11 +7,13 @@ import com.eater.eater.enums.Role;
 import com.eater.eater.model.client.Client;
 import com.eater.eater.repository.client.ClientRepository;
 import com.eater.eater.security.SecurityUtil;
+import com.eater.eater.service.S3.S3ServiceImpl;
 import com.eater.eater.utils.mapper.client.ClientMapper;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 
 @Service
@@ -20,22 +22,28 @@ public class ClientAuthService {
     private final PasswordEncoder passwordEncoder;
     private final UserValidationService userValidationService;
     private final AuthUtilityService authUtilityService;
+    private final S3ServiceImpl s3ServiceImpl;
+
 
     @Autowired
-    public ClientAuthService(ClientRepository clientRepository, PasswordEncoder passwordEncoder, UserValidationService userValidationService, AuthUtilityService authUtilityService) {
+    public ClientAuthService(ClientRepository clientRepository, PasswordEncoder passwordEncoder, UserValidationService userValidationService, AuthUtilityService authUtilityService, S3ServiceImpl s3ServiceImpl) {
         this.clientRepository = clientRepository;
         this.passwordEncoder = passwordEncoder;
         this.userValidationService = userValidationService;
         this.authUtilityService = authUtilityService;
+        this.s3ServiceImpl = s3ServiceImpl;
     }
 
     public AuthResponse<ClientDTO> signUp(ClientRegistrationRequest input) {
         // validation
-        userValidationService.signUpValidation(input.getPhone(), input.getEmail(), null, input.getPassword(), Role.CLIENT);
+        userValidationService.signUpValidation(input.getPhone(), input.getEmail(), input.getPassword(), Role.CLIENT, input.getAvatar());
 
         // save in db
-        Client user = ClientMapper.authToEntity(input, passwordEncoder);
+        Client user = ClientMapper.authToEntity(input, passwordEncoder, null);
         clientRepository.save(user);
+
+        // save avatar in aws
+        addAvatar(input.getAvatar(), user);
 
         // add in context
         authUtilityService.addContext(input.getEmail(), input.getPassword());
@@ -43,6 +51,12 @@ public class ClientAuthService {
         // create and return response
         ClientDTO userDTO = ClientMapper.toDTO(user);
         return authUtilityService.createAuthResponse(user, userDTO);
+    }
+
+    private void addAvatar(MultipartFile avatar, Client user) {
+        String avatarUrl = s3ServiceImpl.putObjectIntoBucket(user.getId(), avatar);
+        user.setAvatarUrl(avatarUrl);
+        clientRepository.save(user);
     }
 
     public AuthResponse<ClientDTO> login(LoginRequest input) {

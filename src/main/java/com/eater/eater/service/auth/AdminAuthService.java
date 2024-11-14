@@ -31,7 +31,7 @@ public class AdminAuthService {
 
     public AuthResponse<AdminDTO> signUp(AdminRegistrationRequest input) {
         // validation
-        userValidationService.signUpValidation(input.getPhone(), input.getEmail(), null, input.getPassword(), Role.ADMIN);
+        userValidationService.signUpValidation(input.getPhone(), input.getEmail(), input.getPassword(), Role.ADMIN);
 
         // save in db
         Admin user = AdminMapper.authToEntity(input, passwordEncoder);

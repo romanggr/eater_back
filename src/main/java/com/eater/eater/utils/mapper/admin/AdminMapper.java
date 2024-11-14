@@ -7,7 +7,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 public class AdminMapper {
     public static AdminDTO toDTO(Admin admin) {
-        if (admin == null) return null;
+        if (admin == null) {
+            throw new IllegalArgumentException("Parameter cannot be null or empty.");
+        }
 
         AdminDTO adminDTO = new AdminDTO();
         adminDTO.setId(admin.getId());
@@ -31,7 +33,9 @@ public class AdminMapper {
     }
 
     public static Admin updateRequestToEntity(UpdateAdminRequest request, Admin currentAdmin) {
-        if (request == null || currentAdmin == null) return null;
+        if (request == null || currentAdmin == null) {
+            throw new IllegalArgumentException("Parameter cannot be null or empty.");
+        }
 
         currentAdmin.setEmail(request.getEmail());
         currentAdmin.setPhone(request.getPhone());

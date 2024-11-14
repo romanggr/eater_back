@@ -1,10 +1,10 @@
 package com.eater.eater.dto.auth;
 
 import com.eater.eater.enums.TransportType;
-import com.eater.eater.model.orders.Orders;
-import com.eater.eater.model.courier.CourierCoordinates;
-import com.eater.eater.model.courier.CourierRating;
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.time.LocalDateTime;
 
 @Data
 public class CourierRegistrationRequest {
@@ -12,9 +12,9 @@ public class CourierRegistrationRequest {
     private String email;
     private String phone;
     private String password;
-    private String avatarUrl;
+    private MultipartFile avatar;
     private TransportType transportType;
-    private Orders orders;
-    private CourierCoordinates courierCoordinates;
-    private CourierRating courierRating;
+    private Double coordinatesLatitude;
+    private Double coordinatesLongitude;
+    private LocalDateTime coordinatesLastUpdate;
 }

@@ -4,7 +4,7 @@ public class OrdersMapper {
 //
 //    public static OrdersDTO toDTO(Orders orders) {
 //        if (orders == null) {
-//            return null;
+//                        throw new IllegalArgumentException("Parameter cannot be null or empty.");
 //        }
 //        OrdersDTO ordersDTO = new OrdersDTO();
 //        ordersDTO.setId(orders.getId());
@@ -43,7 +43,7 @@ public class OrdersMapper {
 //
 //    public static Orders authToEntity(OrdersDTO ordersDTO, Courier courier, Client client) {
 //        if (ordersDTO == null) {
-//            return null;
+//                        throw new IllegalArgumentException("Parameter cannot be null or empty.");
 //        }
 //        Orders orders = new Orders();
 //        orders.setId(ordersDTO.getId());

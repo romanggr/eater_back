@@ -12,8 +12,6 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.concurrent.ExecutionException;
-
 
 @Service
 public class CourierServiceImpl implements CourierService {
@@ -28,17 +26,13 @@ public class CourierServiceImpl implements CourierService {
 
 
     public CourierDTO getCourier() {
-//        Long currentUserId = SecurityUtil.getCurrentUserId(Courier.class);
-//        Courier courier = courierRepository.findById(currentUserId).orElseThrow(
-//                () -> new EntityNotFoundException("Courier not found"));
-//
-//        SecurityUtil.validateUserIsBanned(courier.getCourierStatus());
-//
-//        return CourierMapper.toDTO(courier);
+        Long currentUserId = SecurityUtil.getCurrentUserId(Courier.class);
+        Courier courier = courierRepository.findById(currentUserId).orElseThrow(
+                () -> new EntityNotFoundException("Courier not found"));
 
-        throw new IllegalStateException("dfa");
+        SecurityUtil.validateUserIsBanned(courier.getCourierStatus());
 
-//        return new CourierDTO();
+        return CourierMapper.toDTO(courier);
     }
 
 
