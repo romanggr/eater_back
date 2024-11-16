@@ -1,14 +1,14 @@
 package com.eater.eater.dto.restaurantOwner;
 
 import lombok.Data;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.NumberFormat;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalTime;
 
 @Data
-public class UpdateRestaurantRequest {
+public class CreateRestaurantRequest {
     private String name;
     private String description;
     private String address;
@@ -18,10 +18,10 @@ public class UpdateRestaurantRequest {
     @NumberFormat(pattern = "#.#####")
     private Double longitude;
 
-    private MultipartFile image;
-
     @DateTimeFormat(pattern = "HH:mm:ss")
     private LocalTime isOpenFrom;
     @DateTimeFormat(pattern = "HH:mm:ss")
     private LocalTime isOpenTo;
+
+    private MultipartFile image;
 }

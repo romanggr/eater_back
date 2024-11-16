@@ -3,11 +3,12 @@ package com.eater.eater.service.auth;
 import com.eater.eater.dto.auth.*;
 import com.eater.eater.dto.client.ClientDTO;
 import com.eater.eater.dto.client.UpdateClientRequest;
+import com.eater.eater.enums.FileCategory;
 import com.eater.eater.enums.Role;
 import com.eater.eater.model.client.Client;
 import com.eater.eater.repository.client.ClientRepository;
 import com.eater.eater.security.SecurityUtil;
-import com.eater.eater.service.S3.S3ServiceImpl;
+import com.eater.eater.service.S3.S3AvatarService;
 import com.eater.eater.utils.mapper.client.ClientMapper;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,28 +23,29 @@ public class ClientAuthService {
     private final PasswordEncoder passwordEncoder;
     private final UserValidationService userValidationService;
     private final AuthUtilityService authUtilityService;
-    private final S3ServiceImpl s3ServiceImpl;
+    private final S3AvatarService s3AvatarService;
 
 
     @Autowired
-    public ClientAuthService(ClientRepository clientRepository, PasswordEncoder passwordEncoder, UserValidationService userValidationService, AuthUtilityService authUtilityService, S3ServiceImpl s3ServiceImpl) {
+    public ClientAuthService(ClientRepository clientRepository, PasswordEncoder passwordEncoder, UserValidationService userValidationService, AuthUtilityService authUtilityService, S3AvatarService s3AvatarService) {
         this.clientRepository = clientRepository;
         this.passwordEncoder = passwordEncoder;
         this.userValidationService = userValidationService;
         this.authUtilityService = authUtilityService;
-        this.s3ServiceImpl = s3ServiceImpl;
+        this.s3AvatarService = s3AvatarService;
     }
 
     public AuthResponse<ClientDTO> signUp(ClientRegistrationRequest input) {
         // validation
-        userValidationService.signUpValidation(input.getPhone(), input.getEmail(), input.getPassword(), Role.CLIENT, input.getAvatar());
+        userValidationService.signUpValidation(input.getPhone(), input.getEmail(), input.getPassword(), Role.CLIENT);
 
         // save in db
-        Client user = ClientMapper.authToEntity(input, passwordEncoder, null);
-        clientRepository.save(user);
+        Client startUser = ClientMapper.authToEntity(input, passwordEncoder,
+                "https://eater-bucket.s3.eu-north-1.amazonaws.com/avatars/default-avatar.webp");
+        clientRepository.save(startUser);
 
         // save avatar in aws
-        addAvatar(input.getAvatar(), user);
+        Client user = addAvatar(input.getAvatar(), startUser);
 
         // add in context
         authUtilityService.addContext(input.getEmail(), input.getPassword());
@@ -53,10 +55,10 @@ public class ClientAuthService {
         return authUtilityService.createAuthResponse(user, userDTO);
     }
 
-    private void addAvatar(MultipartFile avatar, Client user) {
-        String avatarUrl = s3ServiceImpl.putObjectIntoBucket(user.getId(), avatar);
+    private Client addAvatar(MultipartFile avatar, Client user) {
+        String avatarUrl = s3AvatarService.putObjectIntoBucket(user.getId(), avatar, FileCategory.AVATAR);
         user.setAvatarUrl(avatarUrl);
-        clientRepository.save(user);
+        return clientRepository.save(user);
     }
 
     public AuthResponse<ClientDTO> login(LoginRequest input) {
@@ -80,8 +82,11 @@ public class ClientAuthService {
         // data validation
         userValidationService.updateValidation(request.getPhone(), request.getEmail(), currentUser.getEmail(), Role.CLIENT, request.getPassword(), currentUser.getPassword(), passwordEncoder);
 
+        // update in aws
+        Client userWithAvatar = updateAvatar(request, currentUser);
+
         // update in db
-        Client userEntity = ClientMapper.updateRequestToEntity(request, currentUser);
+        Client userEntity = ClientMapper.updateRequestToEntity(request, userWithAvatar);
         Client updatedUser = clientRepository.save(userEntity);
 
         // add in context
@@ -90,6 +95,15 @@ public class ClientAuthService {
         // create and return response
         ClientDTO userDTO = ClientMapper.toDTO(updatedUser);
         return authUtilityService.createAuthResponse(updatedUser, userDTO);
+    }
+
+    private Client updateAvatar(UpdateClientRequest request, Client user) {
+        if (request.getAvatar() == null || request.getAvatar().isEmpty()) {
+            return user;
+        }
+        String avatarUrl = s3AvatarService.putObjectIntoBucket(user.getId(), request.getAvatar(), FileCategory.AVATAR);
+        user.setAvatarUrl(avatarUrl);
+        return user;
     }
 
     public AuthResponse<ClientDTO> updatePassword(UpdatePasswordRequest request) {

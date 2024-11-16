@@ -6,17 +6,17 @@ import com.eater.eater.dto.auth.LoginRequest;
 import com.eater.eater.dto.auth.UpdatePasswordRequest;
 import com.eater.eater.dto.courier.CourierDTO;
 import com.eater.eater.dto.courier.UpdateCourierRequest;
+import com.eater.eater.enums.FileCategory;
 import com.eater.eater.enums.Role;
 import com.eater.eater.model.courier.Courier;
 import com.eater.eater.repository.courier.CourierRepository;
 import com.eater.eater.security.SecurityUtil;
-import com.eater.eater.service.S3.S3ServiceImpl;
+import com.eater.eater.service.S3.S3AvatarService;
 import com.eater.eater.utils.mapper.courier.CourierMapper;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 
 @Service
@@ -25,27 +25,39 @@ public class CourierAuthService {
     private final PasswordEncoder passwordEncoder;
     private final UserValidationService userValidationService;
     private final AuthUtilityService authUtilityService;
-    private final S3ServiceImpl s3ServiceImpl;
+    private final S3AvatarService s3AvatarService;
 
     @Autowired
-    public CourierAuthService(CourierRepository courierRepository, PasswordEncoder passwordEncoder, UserValidationService userValidationService, AuthUtilityService authUtilityService, S3ServiceImpl s3ServiceImpl) {
+    public CourierAuthService(CourierRepository courierRepository, PasswordEncoder passwordEncoder, UserValidationService userValidationService, AuthUtilityService authUtilityService, S3AvatarService s3AvatarService) {
         this.courierRepository = courierRepository;
         this.passwordEncoder = passwordEncoder;
         this.userValidationService = userValidationService;
         this.authUtilityService = authUtilityService;
-        this.s3ServiceImpl = s3ServiceImpl;
+        this.s3AvatarService = s3AvatarService;
     }
 
     public AuthResponse<CourierDTO> signUp(CourierRegistrationRequest input) {
         // validation
-        userValidationService.signUpValidation(input.getPhone(), input.getEmail(), input.getPassword(), Role.COURIER, input.getAvatar());
+        userValidationService.signUpValidation(input.getPhone(), input.getEmail(), input.getPassword(), Role.COURIER);
 
         // save in db
-        Courier user = CourierMapper.authToEntity(input, passwordEncoder, null);
+        Courier user = CourierMapper.authToEntity(
+                input,
+                passwordEncoder,
+                "https://eater-bucket.s3.eu-north-1.amazonaws.com/avatars/default-avatar.webp"
+        );
         courierRepository.save(user);
 
         // save avatar in aws
-        addAvatar(input.getAvatar(), user);
+        if (input.getAvatar() != null && !input.getAvatar().isEmpty()) {
+            String avatarUrl = s3AvatarService.putObjectIntoBucket(
+                    user.getId(),
+                    input.getAvatar(),
+                    FileCategory.AVATAR
+            );
+            user.setAvatarUrl(avatarUrl);
+            courierRepository.save(user);
+        }
 
         // add in context
         authUtilityService.addContext(input.getEmail(), input.getPassword());
@@ -55,11 +67,6 @@ public class CourierAuthService {
         return authUtilityService.createAuthResponse(user, userDTO);
     }
 
-    private void addAvatar(MultipartFile avatar, Courier user) {
-        String avatarUrl = s3ServiceImpl.putObjectIntoBucket(user.getId(), avatar);
-        user.setAvatarUrl(avatarUrl);
-        courierRepository.save(user);
-    }
 
     public AuthResponse<CourierDTO> login(LoginRequest input) {
         userValidationService.validateEmail(input.getEmail());
@@ -82,10 +89,18 @@ public class CourierAuthService {
         // data validation
         userValidationService.updateValidation(request.getPhone(), request.getEmail(), currentUser.getEmail(), Role.COURIER, request.getPassword(), currentUser.getPassword(), passwordEncoder);
 
+        // update in aws
+        if (request.getAvatar() != null && !request.getAvatar().isEmpty()) {
+            String avatarUrl = s3AvatarService.putObjectIntoBucket(
+                    currentUser.getId(),
+                    request.getAvatar(),
+                    FileCategory.AVATAR
+            );
+            currentUser.setAvatarUrl(avatarUrl);
+        }
 
         // update in db
-        Courier userEntity = CourierMapper.updateRequestToEntity(request, currentUser);
-        Courier updatedUser = courierRepository.save(userEntity);
+        Courier updatedUser = courierRepository.save(CourierMapper.updateRequestToEntity(request, currentUser));
 
         // add in context
         authUtilityService.addContext(updatedUser.getEmail(), request.getPassword());
@@ -94,6 +109,7 @@ public class CourierAuthService {
         CourierDTO userDTO = CourierMapper.toDTO(updatedUser);
         return authUtilityService.createAuthResponse(updatedUser, userDTO);
     }
+
 
     public AuthResponse<CourierDTO> updatePassword(UpdatePasswordRequest request) {
         // get current data

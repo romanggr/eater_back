@@ -1,6 +1,7 @@
 package com.eater.eater.dto.client;
 
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
 @Data
 public class UpdateClientRequest {
@@ -10,7 +11,7 @@ public class UpdateClientRequest {
         private Double longitude;
         private String email;
         private String phone;
-        private String avatarUrl;
+        private MultipartFile avatar;
         private String password;
     }
 

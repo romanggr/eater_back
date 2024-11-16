@@ -8,7 +8,7 @@ import com.eater.eater.model.restaurantOwner.RestaurantDish;
 
 public class RestaurantDishMapper {
 
-    public static RestaurantDish toEntity(RestaurantDishRequest request, Restaurant restaurant) {
+    public static RestaurantDish toEntity(RestaurantDishRequest request, Restaurant restaurant, String defaultUrl) {
         if (request == null) {
             throw new IllegalArgumentException("Parameter cannot be null or empty.");
         }
@@ -18,24 +18,21 @@ public class RestaurantDishMapper {
         restaurantDish.setDescription(request.getDescription());
         restaurantDish.setPrice(request.getPrice());
         restaurantDish.setWeight(request.getWeight());
-        restaurantDish.setImageUrl(request.getImageUrl());
+        restaurantDish.setImageUrl(defaultUrl);
         restaurantDish.setRestaurant(restaurant);
 
         return restaurantDish;
     }
 
-    public static RestaurantDish toEntityUpdateRequest(RestaurantDishUpdateRequest request, Restaurant restaurant, RestaurantDish restaurantDish) {
+    public static RestaurantDish toEntityUpdateRequest(RestaurantDishUpdateRequest request, RestaurantDish restaurantDish) {
         if (request == null) {
             throw new IllegalArgumentException("Parameter cannot be null or empty.");
         }
 
-        restaurantDish.setId(restaurantDish.getId());
         restaurantDish.setName(request.getName());
         restaurantDish.setDescription(request.getDescription());
         restaurantDish.setPrice(request.getPrice());
         restaurantDish.setWeight(request.getWeight());
-        restaurantDish.setImageUrl(request.getImageUrl());
-        restaurantDish.setRestaurant(restaurant);
 
         return restaurantDish;
     }

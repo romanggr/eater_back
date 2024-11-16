@@ -29,14 +29,14 @@ private final RestaurantServiceImpl restaurantServiceImpl;
     }
 
     @PostMapping("/createRestaurant")
-    public ResponseEntity<RestaurantDTO> createRestaurant(@RequestBody RestaurantDTO request){
+    public ResponseEntity<RestaurantDTO> createRestaurant(@ModelAttribute CreateRestaurantRequest request){
         RestaurantDTO response = restaurantOwnerServiceImpl.createRestaurant(request);
         return ResponseEntity.ok(response);
     }
 
 
     @PutMapping("/updateRestaurant")
-    public ResponseEntity<RestaurantDTO> updateRestaurant(@RequestBody UpdateRestaurantRequest request) {
+    public ResponseEntity<RestaurantDTO> updateRestaurant(@ModelAttribute UpdateRestaurantRequest request) {
         RestaurantDTO response = restaurantServiceImpl.updateRestaurant(request);
         return ResponseEntity.ok(response);
     }
@@ -49,7 +49,7 @@ private final RestaurantServiceImpl restaurantServiceImpl;
     }
 
     @PostMapping("/createDish")
-    public ResponseEntity<RestaurantDishDTO> createDish(@RequestBody RestaurantDishRequest request){
+    public ResponseEntity<RestaurantDishDTO> createDish(@ModelAttribute RestaurantDishRequest request){
         RestaurantDishDTO response = restaurantServiceImpl.createDish(request);
         return ResponseEntity.ok(response);
     }
@@ -61,7 +61,7 @@ private final RestaurantServiceImpl restaurantServiceImpl;
     }
 
     @PutMapping("/updateDish")
-    public ResponseEntity<RestaurantDishDTO> createDish(@RequestBody RestaurantDishUpdateRequest request){
+    public ResponseEntity<RestaurantDishDTO> createDish(@ModelAttribute RestaurantDishUpdateRequest request){
         RestaurantDishDTO response = restaurantServiceImpl.updateDish(request);
         return ResponseEntity.ok(response);
     }

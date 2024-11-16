@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.format.annotation.NumberFormat;
 
 @Entity
 @AllArgsConstructor
@@ -24,9 +25,11 @@ public class RestaurantDish {
     private String description;
 
     @Column(nullable = false)
+    @NumberFormat(pattern = "#.#####")
     private Double price;
 
     @Column(nullable = false)
+    @NumberFormat(pattern = "#.#####")
     private Double weight;
 
     @Column(nullable = false)

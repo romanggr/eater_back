@@ -8,14 +8,17 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface RestaurantDishRepository extends JpaRepository<RestaurantDish, Long> {
-    List<RestaurantDish> findByRestaurantId(Long restaurantId); // New method
+    List<RestaurantDish> findByRestaurantId(Long restaurantId);
+
 
     @Modifying
     @Transactional
     @Query("DELETE FROM RestaurantDish d WHERE d.id = :id")
     void deleteById(Long id);
+
 
 }

@@ -94,13 +94,6 @@ public class UserValidationService {
         validatePassword(password);
     }
 
-    public void signUpValidation(String phone, String email, String password, Role role, MultipartFile file) {
-        validatePhone(phone);
-        validateUniqueEmail(email, null, role);
-        validatePassword(password);
-        avatarValidation(file);
-    }
-
     public void updateValidation(String phone, String email, String oldEmail, Role role, String currentPassword, String encryptedCurrentPassword, PasswordEncoder passwordEncoder) {
         validatePhone(phone);
         validateUniqueEmail(email, oldEmail, role);
@@ -112,19 +105,6 @@ public class UserValidationService {
         isEqualPassword(currentPassword, encryptedCurrentPassword, passwordEncoder);
     }
 
-    public void avatarValidation(MultipartFile file) {
-        if (file == null || file.isEmpty()) {
-            throw new IllegalArgumentException("Avatar cannot be empty.");
-        }
 
-        String fileName = file.getOriginalFilename().toLowerCase();
-        if (!fileName.endsWith(".png") && !fileName.endsWith(".jpg") && !fileName.endsWith(".jpeg") && !fileName.endsWith(".webp")) {
-            throw new IllegalArgumentException("Unsupported image file extension. You can provide .png, .jpg, .jpeg, .webp");
-        }
-
-        if (file.getSize() > 400000) {
-            throw new IllegalArgumentException("Avatar size exceeds 4 kilobytes.");
-        }
-    }
 
 }

@@ -57,7 +57,6 @@ public class ClientMapper {
         client.setLongitude(clientDTO.getLongitude());
         client.setEmail(clientDTO.getEmail());
         client.setPhone(clientDTO.getPhone());
-        client.setAvatarUrl(clientDTO.getAvatarUrl());
 
         return client;
     }

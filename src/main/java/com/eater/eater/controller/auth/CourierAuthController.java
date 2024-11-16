@@ -34,8 +34,8 @@ public class CourierAuthController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<AuthResponse<CourierDTO>> update(@RequestBody UpdateCourierRequest courierDTO){
-        AuthResponse<CourierDTO> response = courierAuthService.update(courierDTO);
+    public ResponseEntity<AuthResponse<CourierDTO>> update(@ModelAttribute UpdateCourierRequest courierRequest){
+        AuthResponse<CourierDTO> response = courierAuthService.update(courierRequest);
 
         return ResponseEntity.ok(response);
     }

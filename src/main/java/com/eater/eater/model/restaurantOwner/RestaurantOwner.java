@@ -30,11 +30,6 @@ public class RestaurantOwner extends User implements UserDetails {
     @JsonIgnoreProperties("restaurantOwner")
     private List<Orders> orders;
 
-    public RestaurantOwner(Long id, String email, String phone, String name, String password, Restaurant restaurant, List<Orders> orders) {
-        super(id, email, phone, name, password, Role.RESTAURANT_OWNER);
-        this.restaurant = restaurant;
-        this.orders = orders;
-    }
 
     public RestaurantOwner(){
         super.setRole(Role.RESTAURANT_OWNER);

@@ -117,9 +117,12 @@ public class CourierMapper {
         courier.setName(updateCourierRequest.getName());
         courier.setEmail(updateCourierRequest.getEmail());
         courier.setPhone(updateCourierRequest.getPhone());
-        courier.setAvatarUrl(updateCourierRequest.getAvatarUrl());
         courier.setTransportType(updateCourierRequest.getTransportType());
 
         return courier;
     }
 }
+
+
+
+

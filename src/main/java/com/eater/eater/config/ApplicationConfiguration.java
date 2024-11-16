@@ -4,8 +4,10 @@ import com.eater.eater.repository.admin.AdminRepository;
 import com.eater.eater.repository.client.ClientRepository;
 import com.eater.eater.repository.courier.CourierRepository;
 import com.eater.eater.repository.restaurantOwner.RestaurantOwnerRepository;
+import com.eater.eater.utils.formatter.LocalTimeFormatter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.format.FormatterRegistry;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -14,6 +16,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import java.time.LocalTime;
 
 @Configuration
 public class ApplicationConfiguration {
@@ -69,5 +74,13 @@ public class ApplicationConfiguration {
         authProvider.setPasswordEncoder(passwordEncoder());
 
         return authProvider;
+    }
+
+    @Configuration
+    public class WebConfig implements WebMvcConfigurer {
+        @Override
+        public void addFormatters(FormatterRegistry registry) {
+            registry.addFormatterForFieldType(LocalTime.class, new LocalTimeFormatter());
+        }
     }
 }

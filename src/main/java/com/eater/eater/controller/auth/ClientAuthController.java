@@ -31,7 +31,7 @@ public class ClientAuthController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<AuthResponse<ClientDTO>> update(@RequestBody UpdateClientRequest courierDTO){
+    public ResponseEntity<AuthResponse<ClientDTO>> update(@ModelAttribute UpdateClientRequest courierDTO){
         AuthResponse<ClientDTO> response = clientAuthService.update(courierDTO);
 
         return ResponseEntity.ok(response);
