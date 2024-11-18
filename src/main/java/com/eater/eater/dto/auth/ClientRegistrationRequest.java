@@ -13,4 +13,5 @@ public class ClientRegistrationRequest {
     private String phone;
     private MultipartFile avatar;
     private String password;
+    private int emailCode;
 }

@@ -3,9 +3,9 @@ package com.eater.eater.service.auth;
 import com.eater.eater.dto.admin.AdminDTO;
 import com.eater.eater.dto.admin.UpdateAdminRequest;
 import com.eater.eater.dto.auth.*;
-import com.eater.eater.enums.Role;
 import com.eater.eater.model.admin.Admin;
 import com.eater.eater.repository.admin.AdminRepository;
+import com.eater.eater.security.EmailConfirmation;
 import com.eater.eater.security.SecurityUtil;
 import com.eater.eater.utils.mapper.admin.AdminMapper;
 import jakarta.persistence.EntityNotFoundException;
@@ -20,18 +20,21 @@ public class AdminAuthService {
     private final PasswordEncoder passwordEncoder;
     private final UserValidationService userValidationService;
     private final AuthUtilityService authUtilityService;
+    private final EmailConfirmation emailConfirmation;
 
     @Autowired
-    public AdminAuthService(AdminRepository adminRepository, PasswordEncoder passwordEncoder, UserValidationService userValidationService, AuthUtilityService authUtilityService) {
+    public AdminAuthService(AdminRepository adminRepository, PasswordEncoder passwordEncoder, UserValidationService userValidationService, AuthUtilityService authUtilityService, EmailConfirmation emailConfirmation) {
         this.adminRepository = adminRepository;
         this.passwordEncoder = passwordEncoder;
         this.userValidationService = userValidationService;
         this.authUtilityService = authUtilityService;
+        this.emailConfirmation = emailConfirmation;
     }
 
     public AuthResponse<AdminDTO> signUp(AdminRegistrationRequest input) {
         // validation
-        userValidationService.signUpValidation(input.getPhone(), input.getEmail(), input.getPassword(), Role.ADMIN);
+        userValidationService.signUpValidation(input.getPhone(), input.getEmail(), input.getPassword());
+        emailConfirmation.verifyEmailCode(input.getEmail(), input.getEmailCode());
 
         // save in db
         Admin user = AdminMapper.authToEntity(input, passwordEncoder);
@@ -64,7 +67,9 @@ public class AdminAuthService {
                 .orElseThrow(() -> new EntityNotFoundException("Admin not found"));
 
         // data validation
-        userValidationService.updateValidation(request.getPhone(), request.getEmail(), currentUser.getEmail(), Role.ADMIN, request.getCurrentPassword(), currentUser.getPassword(), passwordEncoder);
+        userValidationService.updateValidation(request.getPhone(),
+                request.getEmail(), currentUser.getEmail(),
+                request.getCurrentPassword(), currentUser.getPassword(), passwordEncoder);
 
         // update in db
         Admin userEntity = AdminMapper.updateRequestToEntity(request, currentUser);
@@ -85,7 +90,8 @@ public class AdminAuthService {
                 .orElseThrow(() -> new EntityNotFoundException("Admin not found"));
 
         // data validation
-        userValidationService.updatePasswordValidation(request.getNewPassword(), request.getCurrentPassword(), currentUser.getPassword(), passwordEncoder);
+        userValidationService.updatePasswordValidation(request.getNewPassword(),
+                request.getCurrentPassword(), currentUser.getPassword(), passwordEncoder);
 
         // add in context
         authUtilityService.addContext(currentUser.getEmail(), request.getCurrentPassword());

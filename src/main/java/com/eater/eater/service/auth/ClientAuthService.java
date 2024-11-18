@@ -4,9 +4,9 @@ import com.eater.eater.dto.auth.*;
 import com.eater.eater.dto.client.ClientDTO;
 import com.eater.eater.dto.client.UpdateClientRequest;
 import com.eater.eater.enums.FileCategory;
-import com.eater.eater.enums.Role;
 import com.eater.eater.model.client.Client;
 import com.eater.eater.repository.client.ClientRepository;
+import com.eater.eater.security.EmailConfirmation;
 import com.eater.eater.security.SecurityUtil;
 import com.eater.eater.service.S3.S3AvatarService;
 import com.eater.eater.utils.mapper.client.ClientMapper;
@@ -24,20 +24,24 @@ public class ClientAuthService {
     private final UserValidationService userValidationService;
     private final AuthUtilityService authUtilityService;
     private final S3AvatarService s3AvatarService;
+    private final EmailConfirmation emailConfirmation;
 
 
     @Autowired
-    public ClientAuthService(ClientRepository clientRepository, PasswordEncoder passwordEncoder, UserValidationService userValidationService, AuthUtilityService authUtilityService, S3AvatarService s3AvatarService) {
+    public ClientAuthService(ClientRepository clientRepository, PasswordEncoder passwordEncoder, UserValidationService userValidationService, AuthUtilityService authUtilityService, S3AvatarService s3AvatarService, EmailConfirmation emailConfirmation) {
         this.clientRepository = clientRepository;
         this.passwordEncoder = passwordEncoder;
         this.userValidationService = userValidationService;
         this.authUtilityService = authUtilityService;
         this.s3AvatarService = s3AvatarService;
+        this.emailConfirmation = emailConfirmation;
     }
 
     public AuthResponse<ClientDTO> signUp(ClientRegistrationRequest input) {
         // validation
-        userValidationService.signUpValidation(input.getPhone(), input.getEmail(), input.getPassword(), Role.CLIENT);
+        userValidationService.signUpValidation(input.getPhone(), input.getEmail(), input.getPassword());
+        emailConfirmation.verifyEmailCode(input.getEmail(), input.getEmailCode());
+
 
         // save in db
         Client startUser = ClientMapper.authToEntity(input, passwordEncoder,
@@ -80,7 +84,7 @@ public class ClientAuthService {
                 .orElseThrow(() -> new EntityNotFoundException("Client not found"));
 
         // data validation
-        userValidationService.updateValidation(request.getPhone(), request.getEmail(), currentUser.getEmail(), Role.CLIENT, request.getPassword(), currentUser.getPassword(), passwordEncoder);
+        userValidationService.updateValidation(request.getPhone(), request.getEmail(), currentUser.getEmail(), request.getPassword(), currentUser.getPassword(), passwordEncoder);
 
         // update in aws
         Client userWithAvatar = updateAvatar(request, currentUser);

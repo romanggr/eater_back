@@ -17,4 +17,5 @@ public class CourierRegistrationRequest {
     private Double coordinatesLatitude;
     private Double coordinatesLongitude;
     private LocalDateTime coordinatesLastUpdate;
+    private int emailCode;
 }

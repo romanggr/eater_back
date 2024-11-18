@@ -2,6 +2,7 @@ package com.eater.eater.model.restaurantOwner;
 
 import com.eater.eater.enums.RestaurantOwnerStatus;
 import com.eater.eater.enums.Role;
+import com.eater.eater.exception.StatusException;
 import com.eater.eater.model.orders.Orders;
 import com.eater.eater.model.user.User;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -9,7 +10,6 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.List;
@@ -31,7 +31,16 @@ public class RestaurantOwner extends User implements UserDetails {
     private List<Orders> orders;
 
 
-    public RestaurantOwner(){
+    public RestaurantOwner() {
         super.setRole(Role.RESTAURANT_OWNER);
+    }
+
+    @Override
+    public boolean isEnabled() {
+        super.isEnabled();
+        if(restaurantOwnerStatus.equals(RestaurantOwnerStatus.BANNED)){
+            throw new StatusException("Your account is banned.");
+        }
+        return true;
     }
 }

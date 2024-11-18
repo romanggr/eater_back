@@ -2,6 +2,7 @@ package com.eater.eater.model.client;
 
 import com.eater.eater.enums.ClientStatus;
 import com.eater.eater.enums.Role;
+import com.eater.eater.exception.AdminUnverifiedException;
 import com.eater.eater.model.orders.Orders;
 import com.eater.eater.model.courier.CourierRating;
 import com.eater.eater.model.user.User;
@@ -34,17 +35,16 @@ public class Client extends User implements UserDetails {
     private List<CourierRating> rating;
 
 
-    public Client(Long id, String email, String phone, String name, String password, String address, Double latitude, Double longitude, String avatarUrl, List<Orders> orders, List<CourierRating> rating) {
-        super(id, email, phone, name, password, Role.CLIENT);
-        this.address = address;
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.avatarUrl = avatarUrl;
-        this.orders = orders;
-        this.rating = rating;
-    }
-
     public Client() {
         super.setRole(Role.CLIENT);
+    }
+
+    @Override
+    public boolean isEnabled() {
+        super.isEnabled();
+        if (clientStatus.equals(ClientStatus.BANNED)) {
+            throw new AdminUnverifiedException("Your account is banned");
+        }
+        return true;
     }
 }

@@ -8,4 +8,5 @@ public class RestaurantOwnerRegistrationRequest {
     private String email;
     private String phone;
     private String password;
+    private int emailCode;
 }

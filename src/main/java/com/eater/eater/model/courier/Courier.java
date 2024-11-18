@@ -1,8 +1,10 @@
 package com.eater.eater.model.courier;
 
 import com.eater.eater.enums.CourierStatus;
+import com.eater.eater.enums.RestaurantOwnerStatus;
 import com.eater.eater.enums.Role;
 import com.eater.eater.enums.TransportType;
+import com.eater.eater.exception.StatusException;
 import com.eater.eater.model.orders.Orders;
 import com.eater.eater.model.user.User;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -16,6 +18,8 @@ import java.util.List;
 @Entity
 @Data
 @DiscriminatorValue("COURIER")
+@Builder
+@AllArgsConstructor
 public class Courier extends User implements UserDetails {
     private String avatarUrl;
 
@@ -38,16 +42,20 @@ public class Courier extends User implements UserDetails {
     private List<CourierRating> rating;
 
 
-    public Courier(Long id, String email, String phone, String name, String password, String avatarUrl, TransportType transportType, List<Orders> orders, CourierCoordinates coordinates, List<CourierRating> rating) {
-        super(id, email, phone, name, password, Role.COURIER);
-        this.avatarUrl = avatarUrl;
-        this.transportType = transportType;
-        this.orders = orders;
-        this.coordinates = coordinates;
-        this.rating = rating;
-    }
 
     public Courier() {
         super.setRole(Role.COURIER);
+    }
+
+    @Override
+    public boolean isEnabled() {
+        super.isEnabled();
+        if(!courierStatus.equals(CourierStatus.BANNED)){
+            throw new StatusException("Your account is banned.");
+        }
+        if(!courierStatus.equals(CourierStatus.UNCONFIRMED)){
+            throw new StatusException("Your account is unconfirmed. Wait before admin accept your application");
+        }
+        return true;
     }
 }

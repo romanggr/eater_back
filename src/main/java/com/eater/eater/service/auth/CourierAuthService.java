@@ -7,9 +7,9 @@ import com.eater.eater.dto.auth.UpdatePasswordRequest;
 import com.eater.eater.dto.courier.CourierDTO;
 import com.eater.eater.dto.courier.UpdateCourierRequest;
 import com.eater.eater.enums.FileCategory;
-import com.eater.eater.enums.Role;
 import com.eater.eater.model.courier.Courier;
 import com.eater.eater.repository.courier.CourierRepository;
+import com.eater.eater.security.EmailConfirmation;
 import com.eater.eater.security.SecurityUtil;
 import com.eater.eater.service.S3.S3AvatarService;
 import com.eater.eater.utils.mapper.courier.CourierMapper;
@@ -26,19 +26,22 @@ public class CourierAuthService {
     private final UserValidationService userValidationService;
     private final AuthUtilityService authUtilityService;
     private final S3AvatarService s3AvatarService;
+    private final EmailConfirmation emailConfirmation;
 
     @Autowired
-    public CourierAuthService(CourierRepository courierRepository, PasswordEncoder passwordEncoder, UserValidationService userValidationService, AuthUtilityService authUtilityService, S3AvatarService s3AvatarService) {
+    public CourierAuthService(CourierRepository courierRepository, PasswordEncoder passwordEncoder, UserValidationService userValidationService, AuthUtilityService authUtilityService, S3AvatarService s3AvatarService, EmailConfirmation emailConfirmation) {
         this.courierRepository = courierRepository;
         this.passwordEncoder = passwordEncoder;
         this.userValidationService = userValidationService;
         this.authUtilityService = authUtilityService;
         this.s3AvatarService = s3AvatarService;
+        this.emailConfirmation = emailConfirmation;
     }
 
     public AuthResponse<CourierDTO> signUp(CourierRegistrationRequest input) {
         // validation
-        userValidationService.signUpValidation(input.getPhone(), input.getEmail(), input.getPassword(), Role.COURIER);
+        userValidationService.signUpValidation(input.getPhone(), input.getEmail(), input.getPassword());
+        emailConfirmation.verifyEmailCode(input.getEmail(), input.getEmailCode());
 
         // save in db
         Courier user = CourierMapper.authToEntity(
@@ -87,7 +90,7 @@ public class CourierAuthService {
                 .orElseThrow(() -> new EntityNotFoundException("Courier not found"));
 
         // data validation
-        userValidationService.updateValidation(request.getPhone(), request.getEmail(), currentUser.getEmail(), Role.COURIER, request.getPassword(), currentUser.getPassword(), passwordEncoder);
+        userValidationService.updateValidation(request.getPhone(), request.getEmail(), currentUser.getEmail(), request.getPassword(), currentUser.getPassword(), passwordEncoder);
 
         // update in aws
         if (request.getAvatar() != null && !request.getAvatar().isEmpty()) {

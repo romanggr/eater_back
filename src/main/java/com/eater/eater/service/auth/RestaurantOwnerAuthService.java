@@ -3,9 +3,9 @@ package com.eater.eater.service.auth;
 import com.eater.eater.dto.auth.*;
 import com.eater.eater.dto.restaurantOwner.RestaurantOwnerDTO;
 import com.eater.eater.dto.restaurantOwner.UpdateRestaurantOwnerRequest;
-import com.eater.eater.enums.Role;
 import com.eater.eater.model.restaurantOwner.RestaurantOwner;
 import com.eater.eater.repository.restaurantOwner.RestaurantOwnerRepository;
+import com.eater.eater.security.EmailConfirmation;
 import com.eater.eater.security.SecurityUtil;
 import com.eater.eater.utils.mapper.restaurantOwner.RestaurantOwnerMapper;
 import jakarta.persistence.EntityNotFoundException;
@@ -20,18 +20,21 @@ public class RestaurantOwnerAuthService {
     private final PasswordEncoder passwordEncoder;
     private final UserValidationService userValidationService;
     private final AuthUtilityService authUtilityService;
+    private final EmailConfirmation emailConfirmation;
 
     @Autowired
-    public RestaurantOwnerAuthService(RestaurantOwnerRepository restaurantOwnerRepository, PasswordEncoder passwordEncoder, UserValidationService userValidationService, AuthUtilityService authUtilityService) {
+    public RestaurantOwnerAuthService(RestaurantOwnerRepository restaurantOwnerRepository, PasswordEncoder passwordEncoder, UserValidationService userValidationService, AuthUtilityService authUtilityService, EmailConfirmation emailConfirmation) {
         this.restaurantOwnerRepository = restaurantOwnerRepository;
         this.passwordEncoder = passwordEncoder;
         this.userValidationService = userValidationService;
         this.authUtilityService = authUtilityService;
+        this.emailConfirmation = emailConfirmation;
     }
 
     public AuthResponse<RestaurantOwnerDTO> signUp(RestaurantOwnerRegistrationRequest input) {
         // validation
-        userValidationService.signUpValidation(input.getPhone(), input.getEmail(), input.getPassword(), Role.RESTAURANT_OWNER);
+        userValidationService.signUpValidation(input.getPhone(), input.getEmail(), input.getPassword());
+        emailConfirmation.verifyEmailCode(input.getEmail(), input.getEmailCode());
 
         // save in db
         RestaurantOwner user = RestaurantOwnerMapper.authToEntity(input, passwordEncoder);
@@ -64,7 +67,7 @@ public class RestaurantOwnerAuthService {
                 .orElseThrow(() -> new EntityNotFoundException("Restaurant Owner not found"));
 
         // data validation
-        userValidationService.updateValidation(request.getPhone(), request.getEmail(), currentUser.getEmail(), Role.RESTAURANT_OWNER, request.getPassword(), currentUser.getPassword(), passwordEncoder);
+        userValidationService.updateValidation(request.getPhone(), request.getEmail(), currentUser.getEmail(), request.getPassword(), currentUser.getPassword(), passwordEncoder);
 
         // update in db
         RestaurantOwner userEntity = RestaurantOwnerMapper.updateRequestToEntity(request, currentUser);

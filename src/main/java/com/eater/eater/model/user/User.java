@@ -1,8 +1,10 @@
 package com.eater.eater.model.user;
 
 import com.eater.eater.enums.Role;
+import com.eater.eater.exception.UnverifiedEmailException;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -39,6 +41,7 @@ public abstract class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
+
 
 
     @Override

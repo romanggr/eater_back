@@ -117,5 +117,12 @@ public class AdminController {
         return ResponseEntity.ok(response);
     }
 
+    @PostMapping("/fakeData")
+    public ResponseEntity<String> generateFakeData() {
+        adminServiceImpl.generateFakeData();
+        return ResponseEntity.ok("Successfully added");
+    }
+
+
     //todo Get general data like order quantity , earning per day etc.
 }
