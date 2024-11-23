@@ -10,4 +10,7 @@ import java.util.Optional;
 public interface EmailConfirmationRepository extends JpaRepository<EmailConfirmationModel, Long> {
     Optional<EmailConfirmationModel> getReferenceByEmail(String email);
 
+    boolean existsByEmail(String email);
+
+    void deleteByEmail(String email);
 }

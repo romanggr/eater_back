@@ -30,6 +30,10 @@ public class EmailConfirmation {
     }
 
     private void sendCode(String userEmail, int code) {
+        if(emailConfirmationRepository.existsByEmail(userEmail)){
+            emailConfirmationRepository.deleteByEmail(userEmail);
+
+        }
         emailScripts.verifyEmail(userEmail, code);
     }
 
