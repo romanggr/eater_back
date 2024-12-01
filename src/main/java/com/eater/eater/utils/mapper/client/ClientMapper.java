@@ -4,7 +4,15 @@ import com.eater.eater.dto.admin.ClientsForAdminDTO;
 import com.eater.eater.dto.auth.ClientRegistrationRequest;
 import com.eater.eater.dto.client.ClientDTO;
 import com.eater.eater.dto.client.UpdateClientRequest;
+import com.eater.eater.dto.orders.MenuResponse;
+import com.eater.eater.dto.orders.OrderDTOClient;
+import com.eater.eater.dto.orders.OrderHistoryClientDTO;
 import com.eater.eater.model.client.Client;
+import com.eater.eater.model.courier.Courier;
+import com.eater.eater.model.orders.OrderMenu;
+import com.eater.eater.model.orders.Orders;
+import com.eater.eater.model.restaurantOwner.RestaurantOwner;
+import com.eater.eater.utils.mapper.courier.CourierMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
@@ -77,5 +85,76 @@ public class ClientMapper {
                     return dto;
                 })
                 .collect(Collectors.toList());
+    }
+
+    public static OrderDTOClient orderToDTO(Orders order) {
+        if (order == null) {
+            throw new IllegalArgumentException("Parameter cannot be null or empty.");
+        }
+        OrderDTOClient dto = new OrderDTOClient();
+        dto.setId(order.getId());
+        dto.setTotalPrice(order.getTotalPrice());
+        dto.setCreatedAt(order.getCreatedAt());
+        dto.setStatus(order.getStatus());
+
+        List<OrderMenu> orderMenus = order.getOrderMenus();
+        dto.setOrderMenus(orderMenus.stream().map(ClientMapper::toMenuDTO).toList());
+
+        RestaurantOwner restaurantOwner = order.getRestaurantOwner();
+        if (restaurantOwner != null) {
+            dto.setRestaurantName(restaurantOwner.getRestaurant().getName());
+            dto.setRestaurantPhone(restaurantOwner.getPhone());
+            dto.setRestaurantEmail(restaurantOwner.getEmail());
+        }
+
+        Courier courier = order.getCourier();
+        if (courier != null) {
+            dto.setCourierName(courier.getName());
+            dto.setCourierEmail(courier.getEmail());
+            dto.setCourierPhone(courier.getPhone());
+            dto.setCourierAvatarUrl(courier.getAvatarUrl());
+            dto.setCourierTransportType(courier.getTransportType());
+
+            if (courier.getCoordinates() != null) {
+                dto.setCourierCoordinatesDTO(CourierMapper.coordinatesToDTO(courier.getCoordinates()));
+            }
+        }
+
+        return dto;
+    }
+
+    public static OrderHistoryClientDTO toOrderHistoryDTO(Orders order) {
+        OrderHistoryClientDTO dto = new OrderHistoryClientDTO();
+
+        dto.setId(order.getId());
+        dto.setTotalPrice(order.getTotalPrice());
+        dto.setCreatedAt(order.getCreatedAt());
+        dto.setFinishedAt(order.getFinishedAt());
+
+        if (order.getRestaurantOwner() != null) {
+            dto.setRestaurantName(order.getRestaurantOwner().getRestaurant().getName());
+            dto.setRestaurantAddress(order.getRestaurantOwner().getRestaurant().getAddress());
+        }
+
+        if (order.getOrderMenus() != null) {
+            dto.setOrderMenu(order.getOrderMenus());
+        }
+
+        return dto;
+    }
+
+    public static MenuResponse toMenuDTO(OrderMenu menu) {
+        if (menu == null) {
+            throw new IllegalArgumentException("Parameter cannot be null or empty.");
+        }
+
+        MenuResponse dto = new MenuResponse();
+
+        dto.setDishName(menu.getDish().getName());
+        dto.setDishPrice(menu.getDish().getPrice());
+        dto.setQuantity(menu.getDishQuantity());
+        dto.setDishImageUrl(menu.getDish().getImageUrl());
+
+        return dto;
     }
 }

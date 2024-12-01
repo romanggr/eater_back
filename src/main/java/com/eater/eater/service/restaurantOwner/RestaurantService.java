@@ -1,5 +1,7 @@
 package com.eater.eater.service.restaurantOwner;
 
+import com.eater.eater.dto.orders.OrderDTORestaurant;
+import com.eater.eater.dto.orders.OrderHistoryRestaurantDTO;
 import com.eater.eater.dto.restaurantOwner.RestaurantDTO;
 import com.eater.eater.dto.restaurantOwner.RestaurantDishDTO;
 import com.eater.eater.dto.restaurantOwner.RestaurantDishRequest;
@@ -19,4 +21,10 @@ public interface RestaurantService {
     RestaurantDishDTO updateDish(RestaurantDishUpdateRequest request);
 
     List<RestaurantDishDTO> getDishes();
+
+    List<OrderDTORestaurant> getNewOrders();
+
+    OrderDTORestaurant setOrderCooked(Long id);
+
+    List<OrderHistoryRestaurantDTO> getOrdersHistory();
 }

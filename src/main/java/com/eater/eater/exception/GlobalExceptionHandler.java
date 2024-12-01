@@ -66,10 +66,19 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    @ExceptionHandler(NoAvailableCouriersException.class)
+    public ResponseEntity<String> NoAvailableCouriersException(NoAvailableCouriersException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<String> handleBadCredentialsException(BadCredentialsException ex) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Credentials");
+    }
+
+    @ExceptionHandler(GoogleDistanceAPIException.class)
+    public ResponseEntity<String> handleGoogleDistanceAPIException(GoogleDistanceAPIException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     // general errors

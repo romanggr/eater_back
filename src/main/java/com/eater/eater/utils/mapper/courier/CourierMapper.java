@@ -5,9 +5,12 @@ import com.eater.eater.dto.auth.CourierRegistrationRequest;
 import com.eater.eater.dto.courier.CourierCoordinatesDTO;
 import com.eater.eater.dto.courier.CourierDTO;
 import com.eater.eater.dto.courier.UpdateCourierRequest;
+import com.eater.eater.dto.orders.OrderDTOCourier;
+import com.eater.eater.dto.orders.OrderHistoryCourierDTO;
 import com.eater.eater.model.courier.Courier;
 import com.eater.eater.model.courier.CourierCoordinates;
 import com.eater.eater.model.courier.CourierRating;
+import com.eater.eater.model.orders.Orders;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
@@ -45,7 +48,6 @@ public class CourierMapper {
 
         return courierDTO;
     }
-
 
     public static CourierCoordinates coordinatesToEntity(CourierCoordinates courierCoordinates, CourierCoordinatesDTO courierCoordinatesDTO) {
         courierCoordinates.setLatitude(courierCoordinatesDTO.getLatitude());
@@ -121,8 +123,59 @@ public class CourierMapper {
 
         return courier;
     }
+
+    public static OrderDTOCourier orderToDTO(Orders order) {
+        OrderDTOCourier dto = new OrderDTOCourier();
+        dto.setId(order.getId());
+        dto.setTotalPrice(order.getTotalPrice());
+        dto.setDistance(order.getDistance());
+        dto.setCourierEarnings(order.getCourierEarnings());
+
+        if (order.getClient() != null) {
+            dto.setClientAddress(order.getClient().getAddress());
+            dto.setClientName(order.getClient().getName());
+            dto.setClientPhone(order.getClient().getPhone());
+            dto.setClientAvatarUrl(order.getClient().getAvatarUrl());
+            dto.setClientLatitude(order.getClient().getLatitude());
+            dto.setClientLongitude(order.getClient().getLongitude());
+        }
+
+        if (order.getOrderMenus() != null) {
+            dto.setOrderMenus(order.getOrderMenus());
+        }
+
+        if (order.getRestaurantOwner() != null) {
+            dto.setRestaurantPhone(order.getRestaurantOwner().getPhone());
+            dto.setRestaurantName(order.getRestaurantOwner().getName());
+            dto.setRestaurantAddress(order.getRestaurantOwner().getRestaurant().getAddress());
+            dto.setRestaurantLatitude(order.getRestaurantOwner().getRestaurant().getLatitude());
+            dto.setRestaurantLongitude(order.getRestaurantOwner().getRestaurant().getLongitude());
+            dto.setRestaurantAvatarUrl(order.getRestaurantOwner().getRestaurant().getAvatarUrl());
+        }
+
+        return dto;
+    }
+
+    public static OrderHistoryCourierDTO toOrderHistoryDTO(Orders order) {
+        OrderHistoryCourierDTO dto = new OrderHistoryCourierDTO();
+
+        dto.setId(order.getId());
+        dto.setTotalPrice(order.getTotalPrice());
+        dto.setDistance(order.getDistance());
+        dto.setCourierEarnings(order.getCourierEarnings());
+        dto.setCreatedAt(order.getCreatedAt());
+        dto.setFinishedAt(order.getFinishedAt());
+
+        if (order.getClient() != null) {
+            dto.setClientAddress(order.getClient().getAddress());
+            dto.setClientName(order.getClient().getName());
+        }
+        if (order.getRestaurantOwner() != null) {
+            dto.setRestaurantName(order.getRestaurantOwner().getRestaurant().getName());
+            dto.setRestaurantAddress(order.getRestaurantOwner().getRestaurant().getAddress());
+        }
+
+        return dto;
+    }
 }
-
-
-
 

@@ -3,19 +3,19 @@ package com.eater.eater.controller.auth;
 import com.eater.eater.dto.admin.AdminDTO;
 import com.eater.eater.dto.admin.UpdateAdminRequest;
 import com.eater.eater.dto.auth.*;
+import com.eater.eater.service.admin.AdminServiceImpl;
 import com.eater.eater.service.auth.AdminAuthService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("/api/v1/auth/admin")
 @RestController
+@RequiredArgsConstructor
 public class AdminAuthController {
     private final AdminAuthService adminAuthService;
+    private final AdminServiceImpl adminService;
 
-
-    public AdminAuthController(AdminAuthService adminAuthService) {
-        this.adminAuthService = adminAuthService;
-    }
 
     @PostMapping("/signup")
     public ResponseEntity<AuthResponse<AdminDTO>> signup(@RequestBody AdminRegistrationRequest courierRegistrationRequest) {
@@ -45,6 +45,11 @@ public class AdminAuthController {
         return ResponseEntity.ok(response);
     }
 
+    @PostMapping("/fakeData")
+    public ResponseEntity<String> generateFakeData() {
+        adminService.generateFakeData();
+        return ResponseEntity.ok("Successfully added");
+    }
 
 }
 

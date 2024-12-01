@@ -6,6 +6,7 @@ import com.eater.eater.exception.AdminUnverifiedException;
 import com.eater.eater.model.orders.Orders;
 import com.eater.eater.model.courier.CourierRating;
 import com.eater.eater.model.user.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
@@ -27,11 +28,11 @@ public class Client extends User implements UserDetails {
     private ClientStatus clientStatus = ClientStatus.ACTIVE;
 
     @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonIgnoreProperties("client")
+    @JsonIgnore
     private List<Orders> orders;
 
     @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonIgnoreProperties("client")
+    @JsonIgnore
     private List<CourierRating> rating;
 
 

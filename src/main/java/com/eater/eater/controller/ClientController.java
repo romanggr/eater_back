@@ -3,9 +3,14 @@ package com.eater.eater.controller;
 import com.eater.eater.dto.client.ClientDTO;
 import com.eater.eater.dto.courier.CourierCoordinatesDTO;
 import com.eater.eater.dto.courier.CourierRatingDTO;
+import com.eater.eater.dto.orders.CreateOrderRequest;
+import com.eater.eater.dto.orders.OrderDTOClient;
+import com.eater.eater.dto.orders.OrderHistoryClientDTO;
 import com.eater.eater.service.client.ClientServiceImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/client")
@@ -35,4 +40,24 @@ public class ClientController {
         CourierRatingDTO response = clientServiceImpl.setCourierRating(courierRatingDTO);
         return ResponseEntity.ok(response);
     }
+
+
+    @PostMapping("/createOrder")
+    public ResponseEntity<OrderDTOClient> createOrder(@RequestBody CreateOrderRequest request) {
+        OrderDTOClient response = clientServiceImpl.createOrder(request);
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/confirmOrder/{id}")
+    public ResponseEntity<OrderDTOClient> confirmOrder(@PathVariable Long id) {
+        OrderDTOClient response = clientServiceImpl.confirmOrder(id);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/getClientOrderHistory")
+    public ResponseEntity<List<OrderHistoryClientDTO>> getClientOrderHistory() {
+        List<OrderHistoryClientDTO> response = clientServiceImpl.getClientOrderHistory();
+        return ResponseEntity.ok(response);
+    }
+
 }

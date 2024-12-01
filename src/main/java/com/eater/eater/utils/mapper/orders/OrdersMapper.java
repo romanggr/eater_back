@@ -1,67 +1,32 @@
 package com.eater.eater.utils.mapper.orders;
 
+import com.eater.eater.enums.OrderStatus;
+import com.eater.eater.model.client.Client;
+import com.eater.eater.model.courier.Courier;
+import com.eater.eater.model.orders.OrderMenu;
+import com.eater.eater.model.orders.Orders;
+import com.eater.eater.model.restaurantOwner.RestaurantOwner;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
 public class OrdersMapper {
-//
-//    public static OrdersDTO toDTO(Orders orders) {
-//        if (orders == null) {
-//                        throw new IllegalArgumentException("Parameter cannot be null or empty.");
-//        }
-//        OrdersDTO ordersDTO = new OrdersDTO();
-//        ordersDTO.setId(orders.getId());
-//        ordersDTO.setPrice(orders.getPrice());
-//        ordersDTO.setRestaurantName(orders.getRestaurantName());
-//        ordersDTO.setRestaurantAddress(orders.getRestaurantAddress());
-//        ordersDTO.setDistance(orders.getDistance());
-//        ordersDTO.setStartTime(orders.getStartTime());
-//        ordersDTO.setFinishTime(orders.getFinishTime());
-//
-//        if (orders.getClient() != null) {
-//            ordersDTO.setClientId(orders.getClient().getId());
-//            ordersDTO.setClientAddress(orders.getClient().getAddress());
-//            ordersDTO.setClientName(orders.getClient().getName());
-//            ordersDTO.setClientAvatarUrl(orders.getClient().getAvatarUrl());
-//            ordersDTO.setClientPhone(orders.getClient().getPhone());
-//            ordersDTO.setClientEmail(orders.getClient().getEmail());
-//        }
-//
-//        if (orders.getCourier() != null) {
-//            ordersDTO.setCourierId(orders.getCourier().getId());
-//            ordersDTO.setCourierName(orders.getCourier().getName());
-//            ordersDTO.setCourierEmail(orders.getCourier().getEmail());
-//            ordersDTO.setCourierPhone(orders.getCourier().getPhone());
-//            ordersDTO.setCourierAvatarUrl(orders.getCourier().getAvatarUrl());
-//
-//            if (orders.getCourier().getCoordinates() != null) {
-//                ordersDTO.setCourierLatitude(orders.getCourier().getCoordinates().getLatitude());
-//                ordersDTO.setCourierLongitude(orders.getCourier().getCoordinates().getLongitude());
-//                ordersDTO.setCourierCoordinatesLastUpdate(orders.getCourier().getCoordinates().getLastUpdate());
-//            }
-//        }
-//
-//        return ordersDTO;
-//    }
-//
-//    public static Orders authToEntity(OrdersDTO ordersDTO, Courier courier, Client client) {
-//        if (ordersDTO == null) {
-//                        throw new IllegalArgumentException("Parameter cannot be null or empty.");
-//        }
-//        Orders orders = new Orders();
-//        orders.setId(ordersDTO.getId());
-//        orders.setPrice(ordersDTO.getPrice());
-//        orders.setRestaurantName(ordersDTO.getRestaurantName());
-//        orders.setRestaurantAddress(ordersDTO.getRestaurantAddress());
-//        orders.setStartTime(ordersDTO.getStartTime());
-//        orders.setFinishTime(ordersDTO.getFinishTime());
-//        orders.setDistance(ordersDTO.getDistance());
-//
-//        if (courier != null) {
-//            orders.setCourier(courier);
-//        }
-//
-//        if (client != null) {
-//            orders.setClient(client);
-//        }
-//
-//        return orders;
-//    }
+
+    public static Orders toEntity(Client client, Courier courier, RestaurantOwner restaurantOwner, int distance) {
+        double courierEarnings = distance * 1.2 + 3;
+        double appEarnings =  courierEarnings * 20 / 100;
+
+        Orders order = new Orders();
+        order.setClient(client);
+        order.setCourier(courier);
+        order.setRestaurantOwner(restaurantOwner);
+
+        order.setStatus(OrderStatus.CREATED);
+        order.setCreatedAt(LocalDateTime.now());
+        order.setDistance(distance);
+        order.setCourierEarnings(courierEarnings);
+        order.setAppEarnings(appEarnings);
+
+        return order;
+    }
 }

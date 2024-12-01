@@ -4,7 +4,9 @@ import com.eater.eater.repository.admin.AdminRepository;
 import com.eater.eater.repository.client.ClientRepository;
 import com.eater.eater.repository.courier.CourierRepository;
 import com.eater.eater.repository.restaurantOwner.RestaurantOwnerRepository;
+import com.eater.eater.utils.fakeData.FakeData;
 import com.eater.eater.utils.formatter.LocalTimeFormatter;
+import com.github.javafaker.Faker;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
@@ -59,6 +61,11 @@ public class ApplicationConfiguration {
     @Bean
     BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    Faker faker(){
+        return new Faker();
     }
 
     @Bean

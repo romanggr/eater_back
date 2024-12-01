@@ -1,5 +1,7 @@
 package com.eater.eater.controller;
 
+import com.eater.eater.dto.orders.OrderDTORestaurant;
+import com.eater.eater.dto.orders.OrderHistoryRestaurantDTO;
 import com.eater.eater.dto.restaurantOwner.*;
 import com.eater.eater.service.restaurantOwner.RestaurantOwnerServiceImpl;
 import com.eater.eater.service.restaurantOwner.RestaurantServiceImpl;
@@ -63,6 +65,26 @@ private final RestaurantServiceImpl restaurantServiceImpl;
     @PutMapping("/updateDish")
     public ResponseEntity<RestaurantDishDTO> createDish(@ModelAttribute RestaurantDishUpdateRequest request){
         RestaurantDishDTO response = restaurantServiceImpl.updateDish(request);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/newOrders")
+    public ResponseEntity<List<OrderDTORestaurant>> getNewOrders(){
+        List<OrderDTORestaurant> response = restaurantServiceImpl.getNewOrders();
+
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/setOrderCooked/{id}")
+    public ResponseEntity<OrderDTORestaurant> setOrderCooked(@PathVariable Long id){
+        OrderDTORestaurant response = restaurantServiceImpl.setOrderCooked(id);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/ordersHistory")
+    public ResponseEntity<List<OrderHistoryRestaurantDTO>> getOrdersHistory(){
+        List<OrderHistoryRestaurantDTO> response = restaurantServiceImpl.getOrdersHistory();
+
         return ResponseEntity.ok(response);
     }
 }

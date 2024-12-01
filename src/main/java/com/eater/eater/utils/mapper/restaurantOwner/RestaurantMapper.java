@@ -1,8 +1,12 @@
 package com.eater.eater.utils.mapper.restaurantOwner;
 
+import com.eater.eater.dto.orders.OrderDTORestaurant;
+import com.eater.eater.dto.orders.OrderHistoryCourierDTO;
+import com.eater.eater.dto.orders.OrderHistoryRestaurantDTO;
 import com.eater.eater.dto.restaurantOwner.CreateRestaurantRequest;
 import com.eater.eater.dto.restaurantOwner.RestaurantDTO;
 import com.eater.eater.dto.restaurantOwner.UpdateRestaurantRequest;
+import com.eater.eater.model.orders.Orders;
 import com.eater.eater.model.restaurantOwner.Restaurant;
 import com.eater.eater.model.restaurantOwner.RestaurantOwner;
 
@@ -26,6 +30,7 @@ public class RestaurantMapper {
 
         return restaurantDTO;
     }
+
     public static Restaurant toEntity(RestaurantDTO restaurantDTO, RestaurantOwner restaurantOwner) {
         if (restaurantDTO == null) {
             throw new IllegalArgumentException("Parameter cannot be null or empty.");
@@ -80,5 +85,36 @@ public class RestaurantMapper {
         return restaurant;
     }
 
+    public static OrderDTORestaurant toOrderDTO(Orders order) {
+        OrderDTORestaurant dto = new OrderDTORestaurant();
+        dto.setId(order.getId());
+        dto.setCreatedAt(order.getCreatedAt());
+        dto.setRestaurantEarnings(order.getRestaurantEarnings());
 
+        if (order.getOrderMenus() != null) {
+            dto.setOrderMenus(order.getOrderMenus());
+        }
+
+        if (order.getCourier() != null) {
+            dto.setCourierName(order.getCourier().getName());
+            dto.setCourierAvatarUrl(order.getCourier().getAvatarUrl());
+            dto.setCourierPhone(order.getCourier().getPhone());
+            dto.setCourierTransportType(order.getCourier().getTransportType());
+        }
+
+        return dto;
+    }
+
+    public static OrderHistoryRestaurantDTO toOrderHistoryDTO(Orders order) {
+        OrderHistoryRestaurantDTO dto = new OrderHistoryRestaurantDTO();
+        dto.setId(order.getId());
+        dto.setCreatedAt(order.getCreatedAt());
+        dto.setRestaurantEarnings(order.getRestaurantEarnings());
+
+        if (order.getOrderMenus() != null) {
+            dto.setOrderMenus(order.getOrderMenus());
+        }
+
+        return dto;
+    }
 }

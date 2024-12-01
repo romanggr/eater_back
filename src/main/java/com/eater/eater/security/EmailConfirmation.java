@@ -3,37 +3,29 @@ package com.eater.eater.security;
 import com.eater.eater.exception.UnverifiedEmailException;
 import com.eater.eater.model.email.EmailConfirmationModel;
 import com.eater.eater.repository.emailConfirmation.EmailConfirmationRepository;
-import com.eater.eater.repository.user.UserRepository;
 import com.eater.eater.service.auth.UserValidationService;
 import com.eater.eater.service.email.EmailScripts;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.security.SecureRandom;
 
 @Service
+@RequiredArgsConstructor
 public class EmailConfirmation {
     private final EmailScripts emailScripts;
     private final EmailConfirmationRepository emailConfirmationRepository;
     private final UserValidationService userValidationService;
 
 
-    public EmailConfirmation(EmailScripts emailScripts, EmailConfirmationRepository emailConfirmationRepository, UserRepository userRepository, UserValidationService userValidationService) {
-        this.emailScripts = emailScripts;
-        this.emailConfirmationRepository = emailConfirmationRepository;
-        this.userValidationService = userValidationService;
-    }
-
     private int generateCode() {
         SecureRandom secureRandom = new SecureRandom();
         return 1000 + secureRandom.nextInt(9000);
     }
 
-    private void sendCode(String userEmail, int code) {
-        if(emailConfirmationRepository.existsByEmail(userEmail)){
-            emailConfirmationRepository.deleteByEmail(userEmail);
-
-        }
+    public void sendCode(String userEmail, int code) {
         emailScripts.verifyEmail(userEmail, code);
     }
 
@@ -46,7 +38,8 @@ public class EmailConfirmation {
     }
 
     public void startVerification(String userEmail) {
-        int code = generateCode();
+//        int code = generateCode();
+        int code = 1111;
         sendCode(userEmail, code);
         saveCode(userEmail, code);
     }
@@ -54,7 +47,7 @@ public class EmailConfirmation {
     public void verifyEmailCode(String email, int code) {
         userValidationService.validateUniqueEmail(email, null);
 
-        EmailConfirmationModel model = emailConfirmationRepository.getReferenceByEmail(email)
+        EmailConfirmationModel model = emailConfirmationRepository.findLatestByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException("No email confirmation record found for: " + email));
 
         if (model.getCode() != code) {

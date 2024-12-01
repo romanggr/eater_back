@@ -10,7 +10,5 @@ import java.util.Optional;
 @Repository
 public interface RestaurantOwnerRepository extends JpaRepository<RestaurantOwner,Long> {
     Optional<RestaurantOwner> findByEmail(String email);
-    boolean existsByEmail(String email);
-    boolean existsByPhone(String phone);
-    List<RestaurantOwner> findAllByPhone(String phone);
+    Optional<RestaurantOwner> findRestaurantOwnerByRestaurantId(Long restaurantId);
 }

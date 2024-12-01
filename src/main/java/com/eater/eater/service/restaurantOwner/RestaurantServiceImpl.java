@@ -1,12 +1,15 @@
 package com.eater.eater.service.restaurantOwner;
 
-import com.eater.eater.dto.courier.UpdateCourierRequest;
+import com.eater.eater.dto.orders.OrderDTORestaurant;
+import com.eater.eater.dto.orders.OrderHistoryRestaurantDTO;
 import com.eater.eater.dto.restaurantOwner.*;
 import com.eater.eater.enums.FileCategory;
-import com.eater.eater.model.courier.Courier;
+import com.eater.eater.enums.OrderStatus;
+import com.eater.eater.model.orders.Orders;
 import com.eater.eater.model.restaurantOwner.Restaurant;
 import com.eater.eater.model.restaurantOwner.RestaurantDish;
 import com.eater.eater.model.restaurantOwner.RestaurantOwner;
+import com.eater.eater.repository.orders.OrdersRepository;
 import com.eater.eater.repository.restaurantOwner.RestaurantDishRepository;
 import com.eater.eater.repository.restaurantOwner.RestaurantRepository;
 import com.eater.eater.security.SecurityUtil;
@@ -14,23 +17,18 @@ import com.eater.eater.service.S3.S3AvatarService;
 import com.eater.eater.utils.mapper.restaurantOwner.RestaurantDishMapper;
 import com.eater.eater.utils.mapper.restaurantOwner.RestaurantMapper;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 @Service
 public class RestaurantServiceImpl implements RestaurantService {
     private final RestaurantRepository restaurantRepository;
     private final RestaurantDishRepository restaurantDishRepository;
     private final S3AvatarService s3AvatarService;
-
-
-    public RestaurantServiceImpl(RestaurantRepository restaurantRepository, RestaurantDishRepository restaurantDishRepository, S3AvatarService s3AvatarService) {
-        this.restaurantRepository = restaurantRepository;
-        this.restaurantDishRepository = restaurantDishRepository;
-        this.s3AvatarService = s3AvatarService;
-    }
-
+    private final OrdersRepository ordersRepository;
 
     public RestaurantDTO updateRestaurant(UpdateRestaurantRequest request) {
         RestaurantOwner currentUser = SecurityUtil.getCurrentUser(RestaurantOwner.class);
@@ -109,12 +107,47 @@ public class RestaurantServiceImpl implements RestaurantService {
 
 
     public List<RestaurantDishDTO> getDishes() {
-        RestaurantOwner currentUser = SecurityUtil.getCurrentUser(RestaurantOwner.class);
-        Restaurant restaurant = restaurantRepository.findById(currentUser.getRestaurant().getId()).orElseThrow(
+        Long currentUserId = SecurityUtil.getCurrentUserId(RestaurantOwner.class);
+        Restaurant restaurant = restaurantRepository.findById(currentUserId).orElseThrow(
                 () -> new EntityNotFoundException("Restaurant not found"));
 
         List<RestaurantDish> dishes = restaurantDishRepository.findByRestaurantId(restaurant.getId());
-        List<RestaurantDishDTO> dishesDTO = dishes.stream().map(RestaurantDishMapper::toDTO).toList();
-        return dishesDTO;
+
+        return dishes.stream().map(RestaurantDishMapper::toDTO).toList();
+    }
+
+    @Override
+    public List<OrderDTORestaurant> getNewOrders() {
+        Long currentUserId = SecurityUtil.getCurrentUserId(RestaurantOwner.class);
+
+        List<Orders> orders = ordersRepository.findNewOrdersOfRestaurant(currentUserId)
+                .orElseThrow(() -> new EntityNotFoundException("Aren't available orders"));
+
+        return orders.stream().map(RestaurantMapper::toOrderDTO).toList();
+    }
+
+    @Override
+    public OrderDTORestaurant setOrderCooked(Long orderId) {
+        Long currentUserId = SecurityUtil.getCurrentUserId(RestaurantOwner.class);
+
+        Orders order = ordersRepository.findOrderOfRestaurant(currentUserId, orderId)
+                .orElseThrow(() -> new EntityNotFoundException("It order doesn't exist or it isn't your order"));
+
+        order.setStatus(OrderStatus.APPROVED_BY_RESTAURANT);
+        ordersRepository.save(order);
+
+        return RestaurantMapper.toOrderDTO(order);
+    }
+
+    @Override
+    public List<OrderHistoryRestaurantDTO> getOrdersHistory() {
+        Long currentUserId = SecurityUtil.getCurrentUserId(RestaurantOwner.class);
+
+        List<Orders> orders = ordersRepository.findAllOrdersOfRestaurant(currentUserId)
+                .orElseThrow(() -> new EntityNotFoundException("Orders not found"));
+
+        return orders.stream()
+                .map(RestaurantMapper::toOrderHistoryDTO)
+                .toList();
     }
 }

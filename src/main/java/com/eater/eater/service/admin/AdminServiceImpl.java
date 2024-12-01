@@ -4,17 +4,21 @@ import com.eater.eater.dto.admin.*;
 import com.eater.eater.dto.auth.BanRequest;
 import com.eater.eater.dto.client.ClientDTO;
 import com.eater.eater.dto.courier.CourierDTO;
+import com.eater.eater.dto.orders.OrderDTOAdmin;
 import com.eater.eater.dto.restaurantOwner.RestaurantOwnerDTO;
+import com.eater.eater.dto.statistic.StatisticDTO;
 import com.eater.eater.enums.ClientStatus;
 import com.eater.eater.enums.CourierStatus;
 import com.eater.eater.enums.RestaurantOwnerStatus;
 import com.eater.eater.model.admin.Admin;
 import com.eater.eater.model.client.Client;
 import com.eater.eater.model.courier.Courier;
+import com.eater.eater.model.orders.Orders;
 import com.eater.eater.model.restaurantOwner.RestaurantOwner;
 import com.eater.eater.repository.admin.AdminRepository;
 import com.eater.eater.repository.client.ClientRepository;
 import com.eater.eater.repository.courier.CourierRepository;
+import com.eater.eater.repository.orders.OrdersRepository;
 import com.eater.eater.repository.restaurantOwner.RestaurantOwnerRepository;
 import com.eater.eater.security.SecurityUtil;
 import com.eater.eater.service.email.EmailScripts;
@@ -24,11 +28,14 @@ import com.eater.eater.utils.mapper.client.ClientMapper;
 import com.eater.eater.utils.mapper.courier.CourierMapper;
 import com.eater.eater.utils.mapper.restaurantOwner.RestaurantOwnerMapper;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@RequiredArgsConstructor
 @Service
 public class AdminServiceImpl implements AdminService {
     private final FakeData fakeData;
@@ -37,15 +44,7 @@ public class AdminServiceImpl implements AdminService {
     private final AdminRepository adminRepository;
     private final RestaurantOwnerRepository restaurantOwnerRepository;
     private final EmailScripts emailScripts;
-
-    public AdminServiceImpl(FakeData fakeData, CourierRepository courierRepository, ClientRepository clientRepository, AdminRepository adminRepository, RestaurantOwnerRepository restaurantOwnerRepository, EmailScripts emailScripts) {
-        this.fakeData = fakeData;
-        this.courierRepository = courierRepository;
-        this.clientRepository = clientRepository;
-        this.adminRepository = adminRepository;
-        this.restaurantOwnerRepository = restaurantOwnerRepository;
-        this.emailScripts = emailScripts;
-    }
+    private final OrdersRepository ordersRepository;
 
 
     public AdminDTO getAdmin() {
@@ -149,7 +148,7 @@ public class AdminServiceImpl implements AdminService {
     }
 
     public Long deleteAdmin(Long id) {
-        Admin admin = adminRepository.findById(id).orElseThrow(()->new EntityNotFoundException("Admin with id " + id + " not found"));
+        Admin admin = adminRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Admin with id " + id + " not found"));
 
         adminRepository.delete(admin);
 
@@ -165,6 +164,43 @@ public class AdminServiceImpl implements AdminService {
                 .filter(admin -> !admin.isAccepted())
                 .map(AdminMapper::toDTO)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<OrderDTOAdmin> getOrders() {
+        List<Orders> orders = ordersRepository.findAll();
+
+        return orders.stream().map(AdminMapper::toOrderDTO).toList();
+    }
+
+    @Override
+    public OrderDTOAdmin getOrder(Long id) {
+        Orders order = ordersRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException("Order not found"));
+
+        return AdminMapper.toOrderDTO(order);
+    }
+
+    @Override
+    public StatisticDTO getStatistics() {
+        List<Orders> orders = ordersRepository.findAll();
+        long courierQuantity = courierRepository.count();
+        long clientQuantity = clientRepository.count();
+        long restaurantQuantity = restaurantOwnerRepository.count();
+        long ordersPerDay = (int) orders.stream().filter(o -> o.getFinishedAt() != null && o.getFinishedAt().toLocalDate().equals(LocalDate.now())).count();
+        double averageOrderValue = orders.stream().mapToDouble(Orders::getTotalPrice).average().orElse(0.0);
+        double appEarningsPerDay = orders.stream().mapToDouble(Orders::getAppEarnings).sum();
+        double cashFlowPerDay = orders.stream().mapToDouble(Orders::getTotalPrice).sum();
+
+        return StatisticDTO.builder()
+                .courierQuantity(courierQuantity)
+                .restaurantQuantity(restaurantQuantity)
+                .clientQuantity(clientQuantity)
+                .ordersPerDay(ordersPerDay)
+                .averageOrderValue(averageOrderValue)
+                .appEarningsPerDay(appEarningsPerDay)
+                .cashFlowPerDay(cashFlowPerDay)
+                .build();
     }
 
     public void generateFakeData() {
