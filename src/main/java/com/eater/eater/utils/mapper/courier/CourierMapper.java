@@ -11,6 +11,7 @@ import com.eater.eater.model.courier.Courier;
 import com.eater.eater.model.courier.CourierCoordinates;
 import com.eater.eater.model.courier.CourierRating;
 import com.eater.eater.model.orders.Orders;
+import com.eater.eater.utils.mapper.client.ClientMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
@@ -141,7 +142,7 @@ public class CourierMapper {
         }
 
         if (order.getOrderMenus() != null) {
-            dto.setOrderMenus(order.getOrderMenus());
+            dto.setOrderMenus(order.getOrderMenus().stream().map(ClientMapper::toMenuDTO).toList());
         }
 
         if (order.getRestaurantOwner() != null) {

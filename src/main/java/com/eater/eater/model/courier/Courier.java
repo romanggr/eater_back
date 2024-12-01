@@ -49,10 +49,10 @@ public class Courier extends User implements UserDetails {
     @Override
     public boolean isEnabled() {
         super.isEnabled();
-        if (!courierStatus.equals(CourierStatus.BANNED)) {
+        if (courierStatus.equals(CourierStatus.BANNED)) {
             throw new StatusException("Your account is banned.");
         }
-        if (!courierStatus.equals(CourierStatus.UNCONFIRMED)) {
+        if (courierStatus.equals(CourierStatus.UNCONFIRMED)) {
             throw new StatusException("Your account is unconfirmed. Wait before admin accept your application");
         }
         return true;

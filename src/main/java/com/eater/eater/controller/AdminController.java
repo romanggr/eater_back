@@ -21,43 +21,43 @@ public class AdminController {
     private final AdminServiceImpl adminServiceImpl;
 
 
-    @GetMapping("/getAdmin")
+    @GetMapping("/admin")
     public ResponseEntity<AdminDTO> getAdmin() {
         AdminDTO response = adminServiceImpl.getAdmin();
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/getCouriers")
+    @GetMapping("/couriers")
     public ResponseEntity<List<CouriersForAdminDTO>> getCouriers() {
         List<CouriersForAdminDTO> response = adminServiceImpl.getCouriers();
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/getClients")
+    @GetMapping("/clients")
     public ResponseEntity<List<ClientsForAdminDTO>> getClients() {
         List<ClientsForAdminDTO> response = adminServiceImpl.getClients();
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/getRestaurantOwners")
+    @GetMapping("/restaurantOwners")
     public ResponseEntity<List<RestaurantOwnersForAdminDTO>> getRestaurantOwners() {
         List<RestaurantOwnersForAdminDTO> response = adminServiceImpl.getRestaurantOwners();
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/getCourierById/{id}")
+    @GetMapping("/courierById/{id}")
     public ResponseEntity<CourierDTO> getCourierById(@PathVariable Long id) {
         CourierDTO response = adminServiceImpl.getCourierById(id);
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/getClientById/{id}")
+    @GetMapping("/clientById/{id}")
     public ResponseEntity<ClientDTO> getClientById(@PathVariable Long id) {
         ClientDTO response = adminServiceImpl.getClientById(id);
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/getRestaurantOwnerById/{id}")
+    @GetMapping("/restaurantOwnerById/{id}")
     public ResponseEntity<RestaurantOwnerDTO> getRestaurantOwnerById(@PathVariable Long id) {
         RestaurantOwnerDTO response = adminServiceImpl.getRestaurantOwnerById(id);
         return ResponseEntity.ok(response);
@@ -99,7 +99,7 @@ public class AdminController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/getUnconfirmedAdmins")
+    @GetMapping("/unconfirmedAdmins")
     public ResponseEntity<List<AdminDTO>> getUnconfirmedAdmins() {
         List<AdminDTO> response = adminServiceImpl.getUnconfirmedAdmins();
         return ResponseEntity.ok(response);

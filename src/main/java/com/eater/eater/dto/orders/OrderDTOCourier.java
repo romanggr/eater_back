@@ -20,7 +20,7 @@ public class OrderDTOCourier {
     private double clientLatitude;
     private double clientLongitude;
 
-    private List<OrderMenu> orderMenus;
+    private List<MenuResponse> orderMenus;
     private String restaurantPhone;
     private String restaurantName;
     private String restaurantAddress;

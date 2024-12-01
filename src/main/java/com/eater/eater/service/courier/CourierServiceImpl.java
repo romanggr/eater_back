@@ -18,6 +18,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -83,8 +84,14 @@ public class CourierServiceImpl implements CourierService {
         Orders order = ordersRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Order not found"));
 
-        if(!order.getCourier().getId().equals(currentUserId)) throw new StatusException("It isn't order of this courier. Courier can set order delivered if it is his order");
+        if (!order.getStatus().equals(OrderStatus.CREATED)) {
+            throw new IllegalArgumentException("Order is already delivered");
+        }
+
+        if (!order.getCourier().getId().equals(currentUserId))
+            throw new StatusException("It isn't order of this courier. Courier can set order delivered if it is his order");
         order.setStatus(OrderStatus.APPROVED_BY_COURIER);
+        order.setFinishedAt(LocalDateTime.now());
 
         Orders updatedOrder = ordersRepository.save(order);
         return updatedOrder.getId();

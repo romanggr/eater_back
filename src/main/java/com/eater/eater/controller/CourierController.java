@@ -50,7 +50,7 @@ public class CourierController {
     @PutMapping("/setOrderDelivered/{id}")
     public ResponseEntity<Long> setOrderDelivered(@PathVariable Long id) {
         Long deliveredId = courierServiceImpl.setOrderDelivered(id);
-        return ResponseEntity.ok(id);
+        return ResponseEntity.ok(deliveredId);
     }
 
     @GetMapping("/getOrdersHistory")
