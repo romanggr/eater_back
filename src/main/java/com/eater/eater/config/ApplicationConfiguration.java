@@ -1,10 +1,9 @@
 package com.eater.eater.config;
 
-import com.eater.eater.repository.admin.AdminRepository;
-import com.eater.eater.repository.client.ClientRepository;
-import com.eater.eater.repository.courier.CourierRepository;
-import com.eater.eater.repository.restaurantOwner.RestaurantOwnerRepository;
-import com.eater.eater.utils.fakeData.FakeData;
+import com.eater.eater.admin.repository.AdminRepository;
+import com.eater.eater.client.repository.ClientRepository;
+import com.eater.eater.courier.repository.CourierRepository;
+import com.eater.eater.restaurantOwner.repository.RestaurantOwnerRepository;
 import com.eater.eater.utils.formatter.LocalTimeFormatter;
 import com.github.javafaker.Faker;
 import org.springframework.context.annotation.Bean;

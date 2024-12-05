@@ -1,13 +1,39 @@
 package com.eater.eater.security;
 
-import com.eater.eater.enums.ClientStatus;
-import com.eater.eater.enums.CourierStatus;
-import com.eater.eater.enums.RestaurantOwnerStatus;
-import com.eater.eater.exception.StatusException;
+
+import com.eater.eater.DTO.auth.AuthResponse;
+import com.eater.eater.model.user.User;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
 
+@Service
 public class SecurityUtil {
+    private final AuthenticationManager authenticationManager;
+    private final JwtService jwtService;
+
+    public SecurityUtil(AuthenticationManager authenticationManager, JwtService jwtService) {
+        this.authenticationManager = authenticationManager;
+        this.jwtService = jwtService;
+    }
+
+
+    public void addContext(String email, String password) {
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+    }
+
+    public <T extends User, S> AuthResponse<S> createAuthResponse(T user, S userDTO) {
+        String jwtToken = jwtService.generateToken(user);
+        AuthResponse<S> authResponse = new AuthResponse<>();
+        authResponse.setToken(jwtToken);
+        authResponse.setUserData(userDTO);
+
+        return authResponse;
+    }
+
     public static <T> T getCurrentUser(Class<T> clazz) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
@@ -24,36 +50,4 @@ public class SecurityUtil {
             throw new IllegalStateException("Failed to get user ID", e);
         }
     }
-
-    public static void validateCourierStatus(CourierStatus courierStatus) {
-        if (courierStatus == CourierStatus.UNCONFIRMED) {
-            throw new StatusException("Your account is not confirmed yet. Please contact support.");
-        }
-        if (courierStatus == CourierStatus.ON_DELIVERY) {
-            throw new StatusException("You have an order right now. First deliver it and then change the status");
-        }
-        if (courierStatus == CourierStatus.BANNED) {
-            throw new StatusException("Your account was banned please check your email");
-        }
-    }
-
-    public static void validateUserIsBanned(CourierStatus status) {
-        if (status == CourierStatus.BANNED) {
-            throw new StatusException("Your account was banned, please check your email");
-        }
-    }
-
-    public static void validateUserIsBanned(ClientStatus status) {
-        if (status == ClientStatus.BANNED) {
-            throw new StatusException("Your account was banned, please check your email");
-        }
-    }
-
-    public static void validateUserIsBanned(RestaurantOwnerStatus status) {
-        if (status == RestaurantOwnerStatus.BANNED) {
-            throw new StatusException("Your account was banned, please check your email");
-        }
-    }
-
-
 }
