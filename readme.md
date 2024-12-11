@@ -39,6 +39,7 @@ Follow these steps to set up and run the **Eater** application.
 2. Obtain the following:
     - Google Cloud API key for route planning.
     - AWS credentials for S3 storage.
+    - Other Required Secrets: Such as email credentials and application keys.
 
 ### Steps
 
@@ -47,3 +48,17 @@ Clone the backend repository and navigate to its directory:
 ```
 git clone https://github.com/romanggr/eater_back.git
 cd eater_back
+```
+
+#### 2. Configure the Environment File
+    1. Change .env.example to .env and fill up api-keys
+    2. Open the .env file and replace the placeholder values with your actual credentials and keys
+
+#### 3. Build and Start the Application
+```
+docker-compose up --build
+```
+#### 3. Stop the Application
+```
+docker-compose down
+```
