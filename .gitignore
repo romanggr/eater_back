@@ -34,3 +34,4 @@ build/
 
 ### KEYS ###
 application.yml
+.env
