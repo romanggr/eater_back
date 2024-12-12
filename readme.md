@@ -58,7 +58,7 @@ cd eater_back
 ```
 docker-compose up --build
 ```
-#### 3. Stop the Application
+#### 4. Stop the Application
 ```
 docker-compose down
 ```
