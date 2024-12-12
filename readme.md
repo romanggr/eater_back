@@ -51,7 +51,7 @@ cd eater_back
 ```
 
 #### 2. Configure the Environment File
-    1. Change .env.example to .env and fill up api-keys
+    1. Change .env.example to .env
     2. Open the .env file and replace the placeholder values with your actual credentials and keys
 
 #### 3. Build and Start the Application
